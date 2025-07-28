@@ -87,30 +87,24 @@ def get_backend_functions(backend_module):
         else:
             return x.permute(axes)
     
-    def where(condition, x=None, y=None):
-        if x is None and y is None:
-            return backend_module.where(condition)
-        return backend_module.where(condition, x, y)
+    # More one-liners
+    where = lambda condition, x=None, y=None: (
+        backend_module.where(condition) if x is None and y is None
+        else backend_module.where(condition, x, y)
+    )
+    isscalar = lambda x: x.dim() == 0 if hasattr(x, 'dim') else np.isscalar(x)
     
-    def isscalar(x):
-        if hasattr(x, 'dim'):
-            return x.dim() == 0
-        return np.isscalar(x)
-    
-    def quantile(x, q, axis=None, **kwargs):
-        if axis is None:
-            return backend_module.quantile(x.flatten(), q, **kwargs)
-        return backend_module.quantile(x, q, dim=axis, **kwargs)
-    
-    def percentile(x, q, axis=None, **kwargs):
-        return quantile(x, q/100.0, axis=axis, **kwargs)
+    # Simplified one-liner functions
+    quantile = lambda x, q, axis=None, **kwargs: (
+        backend_module.quantile(x.flatten(), q, **kwargs) if axis is None
+        else backend_module.quantile(x, q, dim=axis, **kwargs)
+    )
+    percentile = lambda x, q, axis=None, **kwargs: quantile(x, q/100.0, axis=axis, **kwargs)
     
     def piecewise(x, condlist, funclist, *args, **kwargs):
-        """PyTorch piecewise using numpy conversion."""
-        x_np = to_numpy(x)
-        condlist_np = [to_numpy(c) for c in condlist]
+        x_np, condlist_np = to_numpy(x), [to_numpy(c) for c in condlist]
         result_np = np.piecewise(x_np, condlist_np, funclist, *args, **kwargs)
-        return array(result_np, dtype=x.dtype if hasattr(x, 'dtype') else backend_module.float64)
+        return array(result_np, dtype=getattr(x, 'dtype', backend_module.float64))
     
     # Standard functions that work directly
     functions = {
@@ -261,36 +255,23 @@ def get_backend_functions(backend_module):
     functions['linalg'] = backend_module.linalg
     functions['fft'] = backend_module.fft
     
-    # Random module with NumPy fallback
-    class RandomModule:
-        @staticmethod
-        def randn(*args, **kwargs):
-            return backend_module.randn(*args, **kwargs)
-        
-        @staticmethod
-        def rand(*args, **kwargs):
-            return backend_module.rand(*args, **kwargs)
-        
-        @staticmethod
-        def randint(low, high, size=None, dtype=None):
-            if size is None:
-                return backend_module.randint(low, high, (1,), dtype=dtype).item()
-            return backend_module.randint(low, high, size, dtype=dtype)
-        
-        @staticmethod
-        def default_rng(seed=None):
-            raise NotImplementedError("random.default_rng not implemented for PyTorch backend")
+    # Random module - simplified with lambda functions
+    functions['random'] = type('RandomModule', (), {
+        'randn': lambda *args, **kwargs: backend_module.randn(*args, **kwargs),
+        'rand': lambda *args, **kwargs: backend_module.rand(*args, **kwargs),
+        'randint': lambda low, high, size=None, dtype=None: (
+            backend_module.randint(low, high, (1,), dtype=dtype).item() if size is None
+            else backend_module.randint(low, high, size, dtype=dtype)
+        ),
+                          'default_rng': staticmethod(lambda seed=None: (_ for _ in ()).throw(NotImplementedError("random.default_rng not implemented for PyTorch backend")).__next__())
+    })()
     
-    functions['random'] = RandomModule()
-    
-    # Polynomial module with NumPy fallback
-    class PolynomialModule:
-        class legendre:
-            @staticmethod
-            def leggauss(deg):
-                raise NotImplementedError("polynomial.legendre.leggauss not implemented for PyTorch backend")
-    
-    functions['polynomial'] = PolynomialModule()
+    # Polynomial module - simplified
+    functions['polynomial'] = type('PolynomialModule', (), {
+        'legendre': type('LegendreModule', (), {
+                                      'leggauss': staticmethod(lambda deg: (_ for _ in ()).throw(NotImplementedError("polynomial.legendre.leggauss not implemented for PyTorch backend")).__next__())
+        })()
+    })()
     
     # Add astype method to PyTorch tensors for compatibility
     if not hasattr(backend_module.Tensor, 'astype'):

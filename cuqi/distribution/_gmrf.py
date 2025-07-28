@@ -1,6 +1,4 @@
 import cuqi.array as xp
-from scipy.sparse import diags, eye
-from scipy.sparse import linalg as splinalg
 from scipy.linalg import dft
 from cuqi.geometry import _get_identity_geometries
 from cuqi.utilities import sparse_cholesky

@@ -1,266 +1,163 @@
+"""
+CUQIarray class - Array wrapper with geometry information.
+
+This module provides the CUQIarray class which wraps arrays from any backend
+with geometry information for plotting and parameter/function value conversion.
+"""
+
 from cuqi.geometry import _DefaultGeometry1D
 
-# Import the backend module directly to avoid circular import
-import os
-_backend_name = os.getenv("CUQI_ARRAY_BACKEND", "numpy").lower()
-if _backend_name == "numpy":
-    import numpy as _backend_module
-elif _backend_name == "cupy":
-    try:
-        import cupy as _backend_module
-    except ImportError:
-        import numpy as _backend_module
-elif _backend_name == "jax":
-    try:
-        import jax.numpy as _backend_module
-    except ImportError:
-        import numpy as _backend_module
-elif _backend_name == "pytorch" or _backend_name == "torch":
-    try:
-        import torch as _backend_module
-    except ImportError:
-        import numpy as _backend_module
-else:
-    import numpy as _backend_module
-
-
-if _backend_name == "pytorch" or _backend_name == "torch":
-    # For PyTorch, we need a composition approach since tensors can't be easily subclassed
-    class CUQIarray:
-        def __init__(self, input_array, is_par=True, geometry=None):
-            if not isinstance(input_array, _backend_module.Tensor):
-                self._tensor = _backend_module.tensor(input_array)
-            else:
-                self._tensor = input_array
-            
-            self.is_par = is_par
-            if (not is_par) and (geometry is None):
-                raise ValueError("geometry cannot be none when initializing a CUQIarray as function values (with is_par False).")
-            if is_par and (self._tensor.dim() > 1):
-                raise ValueError("input_array cannot be multidimensional when initializing CUQIarray as parameter (with is_par True).")
-            if geometry is None:
-                from cuqi.geometry import _DefaultGeometry1D
-                geometry = _DefaultGeometry1D(grid=len(self._tensor))
-            self.geometry = geometry
-        
-        def __repr__(self):
-            return "CUQIarray: PyTorch tensor wrapped with geometry.\n" + \
-                   "---------------------------------------------\n\n" + \
-                "Geometry:\n {}\n\n".format(self.geometry) + \
-                "Parameters:\n {}\n\n".format(self.is_par) + \
-                "Tensor:\n" + \
-                str(self._tensor)
-        
-        def __getattr__(self, name):
-            # Delegate to the underlying tensor
-            return getattr(self._tensor, name)
-        
-        def __getitem__(self, key):
-            return self._tensor[key]
-        
-        def __setitem__(self, key, value):
-            self._tensor[key] = value
-        
-        def __len__(self):
-            return len(self._tensor)
-        
-        # Mathematical operations
-        def __add__(self, other):
-            if isinstance(other, CUQIarray):
-                return self._tensor + other._tensor
-            return self._tensor + other
-        
-        def __sub__(self, other):
-            if isinstance(other, CUQIarray):
-                return self._tensor - other._tensor
-            return self._tensor - other
-        
-        def __mul__(self, other):
-            if isinstance(other, CUQIarray):
-                return self._tensor * other._tensor
-            return self._tensor * other
-        
-        def __truediv__(self, other):
-            if isinstance(other, CUQIarray):
-                return self._tensor / other._tensor
-            return self._tensor / other
-        
-        @property
-        def shape(self):
-            return self._tensor.shape
-        
-        @property
-        def dtype(self):
-            return self._tensor.dtype
-        
-        @property
-        def ndim(self):
-            return self._tensor.dim()
-        
-        def reshape(self, *args):
-            return self._tensor.reshape(*args)
-        
-        def view(self, *args):
-            return self._tensor.view(*args)
-        
-        @property
-        def funvals(self):
-            """ Returns itself as function values. """
-            if self.is_par is True:
-                vals = self.geometry.par2fun(self._tensor)
-            else:
-                vals = self._tensor
-
-            if isinstance(vals, _backend_module.Tensor):
-                if vals.dtype == _backend_module.bool:  # PyTorch doesn't have object dtype like NumPy
-                    return vals
-                else:
-                    # Return a new CUQIarray
-                    return type(self)(vals, is_par=False, geometry=self.geometry)
-            else:
-                return vals 
-
-        @property
-        def parameters(self):
-            """ Returns itself as parameters. """
-            if self.is_par is False:
-                funvals = self._tensor
-                vals = self.geometry.fun2par(funvals)
-            else:
-                vals = self._tensor
-            return type(self)(vals, is_par=True, geometry=self.geometry)
-
-        def to_numpy(self):
-            """Return a numpy array of the CUQIarray data."""
-            try:
-                return self._tensor.detach().cpu().numpy()
-            except:
-                raise ValueError(f"Cannot convert {self.__class__.__name__} to numpy array")
-
-        def plot(self, plot_par=False, **kwargs):
-            """ Plot the data as function or parameters. """
-            if plot_par:
-                kwargs["is_par"]=True
-                return self.geometry.plot(self.parameters, plot_par=plot_par, **kwargs)
-            else:
-                kwargs["is_par"]=False
-                return self.geometry.plot(self.funvals, **kwargs)
-
-else:
-    class CUQIarray(_backend_module.ndarray):
+class CUQIarray:
+    """
+    Array wrapper that adds geometry information to backend arrays.
+    
+    This class provides a unified interface for arrays from any backend
+    (NumPy, PyTorch, CuPy, JAX) with additional CUQI-specific functionality
+    like geometry-aware plotting and parameter/function value conversion.
+    """
+    
+    def __init__(self, input_array, is_par=True, geometry=None):
         """
-        A class to represent data arrays, subclassed from backend array, along with geometry and plotting
-
+        Initialize CUQIarray.
+        
         Parameters
         ----------
-        input_array : ndarray
-            A backend array holding the parameter or function values. 
-        
+        input_array : array-like
+            Input array from any supported backend
         is_par : bool, default True
-            Boolean flag whether input_array is to be interpreted as parameter (True) or function values (False).
-
-        geometry : cuqi.geometry.Geometry, default None
-            Contains the geometry related of the data.
+            Whether array represents parameters (True) or function values (False)
+        geometry : Geometry, optional
+            Geometry object for spatial information
         """
-
-        def __repr__(self) -> str: 
-            return "CUQIarray: Backend array wrapped with geometry.\n" + \
-                   "---------------------------------------------\n\n" + \
-                "Geometry:\n {}\n\n".format(self.geometry) + \
-                "Parameters:\n {}\n\n".format(self.is_par) + \
-                "Array:\n" + \
-                super().__repr__()
-
-        def __new__(cls, input_array, is_par=True, geometry=None):
-            # Input array is an already formed ndarray instance
-            # We first cast to be our class type
-            obj = _backend_module.asarray(input_array).view(cls)
-            # add the new attribute to the created instance
-            obj.is_par = is_par
-            if (not is_par) and (geometry is None):
-                raise ValueError("geometry cannot be none when initializing a CUQIarray as function values (with is_par False).")
-            if is_par and (obj.ndim>1):
-                raise ValueError("input_array cannot be multidimensional when initializing CUQIarray as parameter (with is_par True).")
-            if geometry is None:
-                from cuqi.geometry import _DefaultGeometry1D
-                geometry = _DefaultGeometry1D(grid=obj.__len__())
-            obj.geometry = geometry
-            # Finally, we must return the newly created object:
-            return obj
-
-        def __array_finalize__(self, obj):
-            # see InfoArray.__array_finalize__ for comments
-            if obj is None: return
-            self.is_par = getattr(obj, 'is_par', True)
-            self.geometry = getattr(obj, 'geometry', None)
-
-        @property
-        def funvals(self):
-            """ Returns itself as function values. """
-            if self.is_par is True:
-                vals = self.geometry.par2fun(self)
-            else:
-                vals = self
-
-            if isinstance(vals, _backend_module.ndarray):
-                if vals.dtype == _backend_module.dtype('O'):
-                    # if vals is of type ndarray, but the data type of the array
-                    # is object (e.g. FEniCS function), then extract the object and
-                    # return it. reshape(1) is needed to convert the shape from
-                    # () to (1,).
-                    return self.reshape(1)[0]
-                else:
-                    # else, cast the ndarray to a CUQIarray
-                    return type(self)(vals,is_par=False,geometry=self.geometry) #vals.view(_backend_module.ndarray)
-            else:
-                return vals 
-
-        @property
-        def parameters(self):
-            """ Returns itself as parameters. """
-            if self.is_par is False:
-                if self.dtype == _backend_module.dtype('O'):
-                    # If the current state if the CUQIarray is function values, and
-                    # the data type of self is object (e.g. FEniCS function), then
-                    # extract the object and save it. reshape(1) is needed to
-                    # convert the shape from () to (1,).
-                    funvals = self.reshape(1)[0]
-                else:
-                    funvals = self
-                vals = self.geometry.fun2par(funvals)
-
-            else:
-                vals = self
-            return type(self)(vals,is_par=True,geometry=self.geometry)
-
-        def to_numpy(self):
-            """Return a numpy array of the CUQIarray data. If is_par is True, then 
-            the parameters are returned as numpy.ndarray. If is_par is False, then 
-            the function values are returned instead.
-            """
-            try:
-                # Convert to numpy regardless of backend
-                if _backend_name == "cupy":
-                    import cupy
-                    if isinstance(self, cupy.ndarray):
-                        return cupy.asnumpy(self.view(_backend_module.ndarray))
-                elif _backend_name == "jax":
-                    import jax.numpy as jnp
-                    if isinstance(self, jnp.ndarray):
-                        return jnp.asarray(self.view(_backend_module.ndarray)).__array__()
-                
-                # For numpy or fallback
-                import numpy
-                return numpy.asarray(self.view(_backend_module.ndarray))
-            except:
-                raise ValueError(
-                    f"Cannot convert {self.__class__.__name__} to numpy array")
-
-        def plot(self, plot_par=False, **kwargs):
-            """ Plot the data as function or parameters. """
-            if plot_par:
-                kwargs["is_par"]=True
-                return self.geometry.plot(self.parameters, plot_par=plot_par, **kwargs)
-            else:
-                kwargs["is_par"]=False
-                return self.geometry.plot(self.funvals, **kwargs)
+        # Import here to avoid circular imports
+        import cuqi.array as xp
+        
+        # Convert input to current backend array
+        self._array = xp.asarray(input_array)
+        self.is_par = is_par
+        
+        # Validate inputs
+        if not is_par and geometry is None:
+            raise ValueError("geometry cannot be None when is_par=False")
+        if is_par and hasattr(self._array, 'ndim') and self._array.ndim > 1:
+            raise ValueError("input_array cannot be multidimensional when is_par=True")
+        
+        # Set geometry
+        if geometry is None:
+            self.geometry = _DefaultGeometry1D(grid=len(self._array))
+        else:
+            self.geometry = geometry
+    
+    def __repr__(self):
+        """String representation of CUQIarray."""
+        import cuqi.array as xp
+        backend_name = xp.get_backend_name().title()
+        
+        return (f"CUQIarray: {backend_name} array with geometry\n"
+                f"{'=' * 45}\n\n"
+                f"Geometry:\n{self.geometry}\n\n"
+                f"Is Parameters: {self.is_par}\n\n"
+                f"Array:\n{self._array}")
+    
+    def __getattr__(self, name):
+        """Delegate attribute access to underlying array."""
+        return getattr(self._array, name)
+    
+    def __getitem__(self, key):
+        """Array indexing."""
+        return self._array[key]
+    
+    def __setitem__(self, key, value):
+        """Array item assignment."""
+        self._array[key] = value
+    
+    def __len__(self):
+        """Array length."""
+        return len(self._array)
+    
+    # Mathematical operations - return backend arrays, not CUQIarrays
+    def __add__(self, other):
+        other_array = other._array if isinstance(other, CUQIarray) else other
+        return self._array + other_array
+    
+    def __sub__(self, other):
+        other_array = other._array if isinstance(other, CUQIarray) else other
+        return self._array - other_array
+    
+    def __mul__(self, other):
+        other_array = other._array if isinstance(other, CUQIarray) else other
+        return self._array * other_array
+    
+    def __truediv__(self, other):
+        other_array = other._array if isinstance(other, CUQIarray) else other
+        return self._array / other_array
+    
+    def __pow__(self, other):
+        other_array = other._array if isinstance(other, CUQIarray) else other
+        return self._array ** other_array
+    
+    # Properties that delegate to the underlying array
+    @property
+    def shape(self):
+        """Array shape."""
+        return self._array.shape
+    
+    @property
+    def dtype(self):
+        """Array data type."""
+        return self._array.dtype
+    
+    @property
+    def ndim(self):
+        """Number of array dimensions."""
+        import cuqi.array as xp
+        if hasattr(self._array, 'ndim'):
+            return self._array.ndim
+        elif hasattr(self._array, 'dim'):  # PyTorch
+            return self._array.dim()
+        else:
+            return len(self._array.shape)
+    
+    def reshape(self, *args):
+        """Reshape the underlying array."""
+        import cuqi.array as xp
+        return xp.reshape(self._array, *args)
+    
+    @property
+    def funvals(self):
+        """Return array as function values."""
+        if self.is_par:
+            vals = self.geometry.par2fun(self._array)
+        else:
+            vals = self._array
+        
+        # Return new CUQIarray if appropriate
+        import cuqi.array as xp
+        if hasattr(vals, 'dtype') and vals.dtype == xp.bool_:
+            return vals  # Return raw boolean arrays
+        else:
+            return CUQIarray(vals, is_par=False, geometry=self.geometry)
+    
+    @property
+    def parameters(self):
+        """Return array as parameters."""
+        if self.is_par:
+            vals = self._array
+        else:
+            vals = self.geometry.fun2par(self._array)
+        
+        return CUQIarray(vals, is_par=True, geometry=self.geometry)
+    
+    def to_numpy(self):
+        """Convert to NumPy array."""
+        import cuqi.array as xp
+        return xp.to_numpy(self._array)
+    
+    def plot(self, plot_par=False, **kwargs):
+        """Plot the array data."""
+        if plot_par:
+            kwargs["is_par"] = True
+            return self.geometry.plot(self.parameters, plot_par=plot_par, **kwargs)
+        else:
+            kwargs["is_par"] = False
+            return self.geometry.plot(self.funvals, **kwargs)

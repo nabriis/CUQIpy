@@ -1,7 +1,6 @@
 """NumPy backend implementation for CUQIpy array operations."""
 
 import numpy as np
-import scipy.sparse as spa
 from scipy import linalg as splinalg
 from scipy.fftpack import idst
 

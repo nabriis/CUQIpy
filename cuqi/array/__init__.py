@@ -84,6 +84,10 @@ def _expose_backend_functions():
     globals()['to_numpy'] = to_numpy
     globals()['pad'] = pad
     globals()['_backend_module'] = _backend_module
+    
+    # Add sparse module
+    from . import _sparse
+    globals()['sparse'] = _sparse
 
 # Initialize backend on import
 _backend_module = _load_backend()
@@ -144,8 +148,8 @@ __all__ = [
      'float16', 'float32', 'float64', 'complex64', 'complex128', 'bool_',
      'ndarray', 'dtype', 'integer', 'floating', 'complexfloating',
     
-    # Modules
-    'random', 'fft', 'polynomial',
+         # Modules
+     'random', 'fft', 'polynomial', 'sparse',
     
     # CUQIarray class
     'CUQIarray',
