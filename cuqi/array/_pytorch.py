@@ -257,14 +257,14 @@ def get_backend_functions(backend_module):
     functions['linalg'] = backend_module.linalg
     functions['fft'] = backend_module.fft
     
-    # Random module - simplified with lambda functions
-    functions['random'] = type('RandomModule', (), {
-        'randn': lambda *args, **kwargs: backend_module.randn(*args, **kwargs),
-        'rand': lambda *args, **kwargs: backend_module.rand(*args, **kwargs),
-        'randint': lambda low, high, size=None, dtype=None: (
-            backend_module.randint(low, high, (1,), dtype=dtype).item() if size is None
-            else backend_module.randint(low, high, size, dtype=dtype)
-        ),
+         # Random module - simplified with lambda functions
+     functions['random'] = type('RandomModule', (), {
+         'randn': staticmethod(lambda *args, **kwargs: backend_module.randn(*args, **kwargs)),
+         'rand': staticmethod(lambda *args, **kwargs: backend_module.rand(*args, **kwargs)),
+                 'randint': staticmethod(lambda low, high, size=None, dtype=None: (
+             backend_module.randint(low, high, (1,), dtype=dtype).item() if size is None
+             else backend_module.randint(low, high, size, dtype=dtype)
+         )),
                           'default_rng': staticmethod(lambda seed=None: (_ for _ in ()).throw(NotImplementedError("random.default_rng not implemented for PyTorch backend")).__next__())
     })()
     
