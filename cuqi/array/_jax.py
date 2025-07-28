@@ -183,6 +183,8 @@ def get_backend_functions(backend_module):
         # Array type
         'ndarray': backend_module.ndarray,
         'dtype': backend_module.dtype,
+        'size': backend_module.size,
+        'shape': lambda x: x.shape,
         
         # Type hierarchies (fallback to NumPy)
         'integer': np.integer,

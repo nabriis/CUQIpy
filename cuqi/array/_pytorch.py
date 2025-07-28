@@ -244,6 +244,8 @@ def get_backend_functions(backend_module):
         # Array type
         'ndarray': backend_module.Tensor,
         'dtype': backend_module.dtype,
+        'size': lambda x: x.numel() if hasattr(x, 'numel') else backend_module.numel(x),
+        'shape': lambda x: x.shape,
         
         # Type hierarchies (fallback to NumPy)
         'integer': np.integer,

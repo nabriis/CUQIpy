@@ -1,5 +1,6 @@
 import cuqi.array as xp
 from scipy.linalg import dft
+from scipy.sparse import linalg as splinalg
 from cuqi.geometry import _get_identity_geometries
 from cuqi.utilities import sparse_cholesky
 from cuqi import config
@@ -130,7 +131,7 @@ class GMRF(Distribution):
             print("Warning (GMRF): Periodic and Neumann boundary conditions are experimental. Sampling using LinearRTO may not produce fully accurate results.")
             eps = xp.finfo(float).eps
             self._rank = self.dim - 1   #xp.linalg.matrix_rank(self.L.todense())
-            self._chol = sparse_cholesky(self._prec_op + xp.sqrt(eps)*eye(self.dim, dtype=int)).T
+            self._chol = sparse_cholesky(self._prec_op + xp.sqrt(eps)*xp.eye(self.dim, dtype=int)).T
             if (self.dim > config.MAX_DIM_INV):  # approximate to avoid 'excessive' time
                 self._logdet = 2*sum(xp.log(self._chol.diagonal()))
             else:
@@ -202,7 +203,7 @@ class GMRF(Distribution):
             
             F = dft(self.dim, scale='sqrtn')   # unitary DFT matrix
             eigv = xp.hstack([self._L_eigval, self._L_eigval[-1]])  # repeat last eigval to complete dim
-            L_sqrt = diags(xp.sqrt(eigv)) 
+            L_sqrt = xp.sparse.diags(xp.sqrt(eigv)) 
             s = self.mean[:, xp.newaxis] + (1/xp.sqrt(self.prec))*xp.real(F.conj() @ splinalg.spsolve(L_sqrt, xi))
             
         elif (self._bc_type == 'neumann'):

@@ -142,17 +142,18 @@ def spdiags(data, diags, m, n, format=None):
     for i, offset in enumerate(diags):
         diag_data = data[i]
         offset = int(offset)
+        diag_len = diag_data.shape[0] if diag_data.ndim > 0 else 1
         
         if offset >= 0:
             # Upper diagonal
-            for j in range(min(len(diag_data), m, n - offset)):
+            for j in range(min(diag_len, m, n - offset)):
                 if j < m and j + offset < n:
-                    matrix[j, j + offset] = diag_data[j]
+                    matrix[j, j + offset] = diag_data[j] if diag_len > 1 else diag_data
         else:
             # Lower diagonal
-            for j in range(min(len(diag_data), m + offset, n)):
+            for j in range(min(diag_len, m + offset, n)):
                 if j - offset < m and j < n:
-                    matrix[j - offset, j] = diag_data[j]
+                    matrix[j - offset, j] = diag_data[j] if diag_len > 1 else diag_data
     
     return matrix
 
