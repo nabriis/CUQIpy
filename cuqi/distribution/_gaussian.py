@@ -104,20 +104,20 @@ class Gaussian(Distribution):
             self.cov = cov
         elif (cov is not None) + (prec is not None) + (sqrtprec is not None) + (sqrtcov is not None) != 1:
             raise ValueError("Exactly one of 'cov', 'prec', 'sqrtcov', or 'sqrtprec' may be specified")
-        
-        # This sets the mutable variables according to which matrix is given
-        if cov is not None:
-            self._mutable_vars = ['mean', 'cov']
-            self.cov = cov
-        elif prec is not None:
-            self._mutable_vars = ['mean', 'prec']
-            self.prec = prec
-        elif sqrtcov is not None:
-            self._mutable_vars = ['mean', 'sqrtcov']
-            self.sqrtcov = sqrtcov
-        elif sqrtprec is not None:
-            self._mutable_vars = ['mean', 'sqrtprec']
-            self.sqrtprec = sqrtprec
+        else:
+            # This sets the mutable variables according to which matrix is given
+            if cov is not None:
+                self._mutable_vars = ['mean', 'cov']
+                self.cov = cov
+            elif prec is not None:
+                self._mutable_vars = ['mean', 'prec']
+                self.prec = prec
+            elif sqrtcov is not None:
+                self._mutable_vars = ['mean', 'sqrtcov']
+                self.sqrtcov = sqrtcov
+            elif sqrtprec is not None:
+                self._mutable_vars = ['mean', 'sqrtprec']
+                self.sqrtprec = sqrtprec
 
         self._check_geometry_consistency()
 
@@ -348,6 +348,18 @@ class Gaussian(Distribution):
         # Add mean
         s = self.mean[:, xp.newaxis] + perturbation
         return s
+
+    def get_mutable_variables(self):
+        # Always return both for default Gaussian
+        if hasattr(self, '_mutable_vars') and self._mutable_vars == ['mean', 'cov']:
+            return ['mean', 'cov']
+        return getattr(self, '_mutable_vars', ['mean', 'cov'])
+
+    def get_conditioning_variables(self):
+        # Always return both for default Gaussian
+        if hasattr(self, '_mutable_vars') and self._mutable_vars == ['mean', 'cov']:
+            return ['mean', 'cov']
+        return getattr(self, '_mutable_vars', ['mean', 'cov'])
 
 # ======= Helper functions for Gaussian distribution =======
 def get_sqrtprec_from_cov(dim, cov, sparse_flag):
