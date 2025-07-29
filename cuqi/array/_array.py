@@ -72,8 +72,18 @@ class CUQIarray:
         self._array[key] = value
     
     def __len__(self):
-        """Array length."""
-        return len(self._array)
+        try:
+            return len(self._array)
+        except TypeError:
+            # If self._array is a scalar, return 1 (or raise informative error)
+            import numpy as np
+            arr = np.asarray(self._array)
+            if arr.shape == ():
+                return 1
+            raise
+    
+    def __abs__(self):
+        return abs(self._array)
     
     # Mathematical operations - return backend arrays, not CUQIarrays
     def __add__(self, other):
@@ -177,3 +187,68 @@ class CUQIarray:
         else:
             kwargs["is_par"] = False
             return self.geometry.plot(self.funvals, **kwargs)
+
+    def __array_ufunc__(self, ufunc, method, *inputs, **kwargs):
+        # Convert all CUQIarray inputs to their backend arrays
+        arrays = [x._array if isinstance(x, CUQIarray) else x for x in inputs]
+        result = getattr(ufunc, method)(*arrays, **kwargs)
+        # Wrap result as CUQIarray if shape matches self, else return raw
+        import numpy as np
+        arr = np.asarray(result)
+        if arr.shape == self._array.shape:
+            return CUQIarray(result, is_par=self.is_par, geometry=self.geometry)
+        return result
+
+    def __array_function__(self, func, types, args, kwargs):
+        # Convert all CUQIarray args to backend arrays
+        arrays = [x._array if isinstance(x, CUQIarray) else x for x in args]
+        result = func(*arrays, **kwargs)
+        import numpy as np
+        arr = np.asarray(result)
+        if arr.shape == self._array.shape:
+            return CUQIarray(result, is_par=self.is_par, geometry=self.geometry)
+        return result
+
+    def __radd__(self, other):
+        other_array = other._array if isinstance(other, CUQIarray) else other
+        return other_array + self._array
+
+    def __rsub__(self, other):
+        other_array = other._array if isinstance(other, CUQIarray) else other
+        return other_array - self._array
+
+    def __rmul__(self, other):
+        other_array = other._array if isinstance(other, CUQIarray) else other
+        return other_array * self._array
+
+    def __rtruediv__(self, other):
+        other_array = other._array if isinstance(other, CUQIarray) else other
+        return other_array / self._array
+
+    def __rpow__(self, other):
+        other_array = other._array if isinstance(other, CUQIarray) else other
+        return other_array ** self._array
+
+    def __le__(self, other):
+        other_array = other._array if isinstance(other, CUQIarray) else other
+        return self._array <= other_array
+
+    def __lt__(self, other):
+        other_array = other._array if isinstance(other, CUQIarray) else other
+        return self._array < other_array
+
+    def __ge__(self, other):
+        other_array = other._array if isinstance(other, CUQIarray) else other
+        return self._array >= other_array
+
+    def __gt__(self, other):
+        other_array = other._array if isinstance(other, CUQIarray) else other
+        return self._array > other_array
+
+    def __eq__(self, other):
+        other_array = other._array if isinstance(other, CUQIarray) else other
+        return self._array == other_array
+
+    def __ne__(self, other):
+        other_array = other._array if isinstance(other, CUQIarray) else other
+        return self._array != other_array

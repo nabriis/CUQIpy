@@ -83,6 +83,7 @@ def _expose_backend_functions():
     # Add utility functions
     globals()['to_numpy'] = to_numpy
     globals()['pad'] = pad
+    globals()['meshgrid'] = functions.get('meshgrid')
     globals()['_backend_module'] = _backend_module
     
     # Add sparse module
@@ -96,7 +97,7 @@ _expose_backend_functions()
 # Define what gets exported
 __all__ = [
     # Backend control
-    'get_backend_name', 'set_backend', 'to_numpy', 'pad',
+    'get_backend_name', 'set_backend', 'to_numpy', 'pad', 'meshgrid',
     
     # Array creation
     'array', 'zeros', 'ones', 'zeros_like', 'ones_like', 'empty', 'empty_like',

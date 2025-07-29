@@ -274,6 +274,8 @@ def get_backend_functions(backend_module):
                                       'leggauss': staticmethod(lambda deg: (_ for _ in ()).throw(NotImplementedError("polynomial.legendre.leggauss not implemented for PyTorch backend")).__next__())
         })()
     })()
+
+    functions['meshgrid'] = meshgrid
     
     # Add astype method to PyTorch tensors for compatibility
     if not hasattr(backend_module.Tensor, 'astype'):
@@ -320,3 +322,7 @@ def pad(array, pad_width, mode='constant', **kwargs):
     
     constant_value = kwargs.get('constant_values', 0)
     return F.pad(array, pad_list, mode=torch_mode, value=constant_value)
+
+def meshgrid(*tensors, **kwargs):
+    """Wrapper for torch.meshgrid to mimic numpy.meshgrid signature."""
+    return torch.meshgrid(*tensors, **kwargs)

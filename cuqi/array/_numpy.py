@@ -195,6 +195,7 @@ def get_backend_functions(backend_module):
     functions['linalg'] = backend_module.linalg
     functions['random'] = backend_module.random
     functions['fft'] = backend_module.fft
+    functions['meshgrid'] = meshgrid
     
     # Add polynomial module
     class PolynomialModule:
@@ -217,3 +218,7 @@ def pad(array, pad_width, mode='constant', **kwargs):
     if mode != 'constant' and 'constant_values' in kwargs:
         kwargs.pop('constant_values')
     return np.pad(array, pad_width, mode=mode, **kwargs)
+
+def meshgrid(*args, **kwargs):
+    """Wrapper for numpy.meshgrid to be used in CUQI array backend."""
+    return np.meshgrid(*args, **kwargs)

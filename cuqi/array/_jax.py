@@ -195,6 +195,7 @@ def get_backend_functions(backend_module):
     # Add modules
     functions['linalg'] = backend_module.linalg
     functions['fft'] = backend_module.fft
+    functions['meshgrid'] = meshgrid
     
     # JAX random is different - use numpy fallback
     import numpy as np
@@ -202,8 +203,11 @@ def get_backend_functions(backend_module):
     
     # Add polynomial module (fallback to NumPy)
     functions['polynomial'] = np.polynomial
-    
-    return functions
+
+def meshgrid(*args, **kwargs):
+    """Wrapper for jax.numpy.meshgrid to be used in CUQI array backend."""
+    import jax.numpy as jnp
+    return jnp.meshgrid(*args, **kwargs)
 
 def to_numpy(x):
     """Convert JAX array to NumPy array."""
