@@ -43,6 +43,9 @@ nan = np.nan
 inf = np.inf
 pi = np.pi
 matrix = np.matrix
+identity = np.identity
+size = np.size
+shape = np.shape
 # ... (add more as needed)
 
 # Linalg API
