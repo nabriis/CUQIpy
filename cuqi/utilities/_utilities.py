@@ -8,18 +8,19 @@ from scipy.sparse import linalg as spslinalg
 from dataclasses import dataclass
 from abc import ABCMeta
 import matplotlib.pyplot as plt
+import cuqi.array as xp
 
 
 def force_ndarray(value,flatten=False):
-    if not isinstance(value, np.ndarray) and value is not None and not issparse(value) and not callable(value):
+    if not isinstance(value, xp.ndarray) and value is not None and not issparse(value) and not callable(value):
         if hasattr(value,'__len__') and len(value)>1:
-            value = np.array(value)
+            value = xp.array(value)
         else:
-            value = np.array(value).reshape((1,1))
+            value = xp.array(value).reshape((1,1))
             
         if flatten is True:
             value = value.flatten()
-    if isinstance(value,np.matrix): #Convert to array if matrix (matrix acts different on (n,) arrays)
+    if isinstance(value,xp.matrix): #Convert to array if matrix (matrix acts different on (n,) arrays)
         value = value.A
     return value
 
@@ -117,8 +118,8 @@ def get_writeable_properties(cls, stop_at_class=object):
 @dataclass
 class ProblemInfo:
     """Problem info dataclass. Gives a convenient way to store data defined in test-problems."""
-    exactSolution: np.ndarray = None
-    exactData: np.ndarray = None
+    exactSolution: xp.ndarray = None
+    exactData: xp.ndarray = None
     Miscellaneous: dict = None
     infoString: str = None
 
@@ -143,12 +144,12 @@ def sparse_cholesky(A):
 
 
     # check the matrix A is positive definite
-    if (LU.perm_r == np.arange(A.shape[0])).all() and (LU.U.diagonal() > 0).all(): 
+    if (LU.perm_r == xp.arange(A.shape[0])).all() and (LU.U.diagonal() > 0).all(): 
         return (LU.L @ (diags(LU.U.diagonal()**0.5))).T
     else:
         raise TypeError('The matrix is not positive semi-definite')
 
-def approx_derivative(func, wrt, direction=None, epsilon=np.sqrt(np.finfo(float).eps)):
+def approx_derivative(func, wrt, direction=None, epsilon=xp.sqrt(xp.finfo(float).eps)):
     """Approximates the derivative of callable (possibly vector-valued) function `func` evaluated at point `wrt`. If `direction` is provided, the direction-Jacobian product will be computed and returned, otherwise, the Jacobian matrix (or the gradient in case of a scalar function `func`) will be returned. The approximation is done using forward differences.
 
     Parameters
@@ -189,8 +190,8 @@ def approx_derivative(func, wrt, direction=None, epsilon=np.sqrt(np.finfo(float)
     # If the direction is provided, we compute the direction-Jacobian product.
     wrt = force_ndarray(wrt, flatten=True)
     f0 = func(wrt)
-    Matr = np.zeros([infer_len(wrt), infer_len(f0)])
-    dx = np.zeros(len(wrt))
+    Matr = xp.zeros([infer_len(wrt), infer_len(f0)])
+    dx = xp.zeros(len(wrt))
 
     # Compute the Jacobian matrix (transpose)
     for i in range(len(wrt)):
@@ -264,10 +265,10 @@ def plot_1D_density(density:Density,
     """
     # Assert that the density is 1D
     assert density.dim == 1, "The density must be for a scalar variable"
-    ls = np.linspace(v_min, v_max, N)
+    ls = xp.linspace(v_min, v_max, N)
 
     # Create a map to evaluate density
-    density_map = (lambda x: x) if log_scale else (lambda x: np.exp(x))
+    density_map = (lambda x: x) if log_scale else (lambda x: xp.exp(x))
 
     # Evaluate density on grid
     y = [density_map(density.logd(grid_point)) for grid_point in ls]
@@ -319,15 +320,15 @@ def plot_2D_density(density: Density,
     assert density.dim == 2,\
         "The density must be for a two-dimensional variable"
     # Create grid
-    ls1 = np.linspace(v1_min, v1_max, N1)
-    ls2 = np.linspace(v2_min, v2_max, N2)
-    grid1, grid2 = np.meshgrid(ls1, ls2)
+    ls1 = xp.linspace(v1_min, v1_max, N1)
+    ls2 = xp.linspace(v2_min, v2_max, N2)
+    grid1, grid2 = xp.meshgrid(ls1, ls2)
 
     # Create a map to evaluate density
-    density_map = (lambda x: x) if log_scale else (lambda x: np.exp(x))
+    density_map = (lambda x: x) if log_scale else (lambda x: xp.exp(x))
 
     # Evaluate density on grid
-    evaluated_density = np.zeros((N1, N2))
+    evaluated_density = xp.zeros((N1, N2))
     for ii in range(N1):
         for jj in range(N2):
             evaluated_density[ii,jj] = density_map(
@@ -358,10 +359,10 @@ def count_nonzero(x, threshold = 1e-6):
         threshold : float
             Theshold for considering a value as nonzero.
         """
-        return np.sum([np.abs(v) >= threshold for v in x])
+        return xp.sum([xp.abs(v) >= threshold for v in x])
 
         
-def count_within_bounds(x, lower_bounds, upper_bounds, threshold = 1e-6, exception = np.nan):
+def count_within_bounds(x, lower_bounds, upper_bounds, threshold = 1e-6, exception = xp.nan):
         """ Returns the number of values in an array whose value lies between the provided lower and upper bounds.
 
         Parameters
@@ -378,10 +379,10 @@ def count_within_bounds(x, lower_bounds, upper_bounds, threshold = 1e-6, excepti
         threshold : float
             Theshold for considering a value as nonzero.
         """
-        return np.sum([l + threshold <= v and v <= u - threshold and not (exception - threshold <= v and v <= exception + threshold) for v, l, u in zip(x, lower_bounds, upper_bounds)])
+        return xp.sum([l + threshold <= v and v <= u - threshold and not (exception - threshold <= v and v <= exception + threshold) for v, l, u in zip(x, lower_bounds, upper_bounds)])
         
     
-def count_constant_components_1D(x, threshold = 1e-2, lower = -np.inf, upper = np.inf, exception = np.nan):
+def count_constant_components_1D(x, threshold = 1e-2, lower = -xp.inf, upper = xp.inf, exception = xp.nan):
         """ Returns the number of piecewise constant components in a one-dimensional array
 
         Parameters
@@ -399,11 +400,11 @@ def count_constant_components_1D(x, threshold = 1e-2, lower = -np.inf, upper = n
             Piecewise constant components above this value are not counted.
         """
 
-        if not isinstance(lower, np.ndarray):
-            lower = lower*np.ones_like(x)
+        if not isinstance(lower, xp.ndarray):
+            lower = lower*xp.ones_like(x)
 
-        if not isinstance(upper, np.ndarray):
-            upper = upper*np.ones_like(x)
+        if not isinstance(upper, xp.ndarray):
+            upper = upper*xp.ones_like(x)
 
         counter = 0
         index = 0
@@ -416,7 +417,7 @@ def count_constant_components_1D(x, threshold = 1e-2, lower = -np.inf, upper = n
 
         for x_current in x[1:]:
             index += 1
-            if (abs(x_previous - x_current) >= threshold and
+            if (xp.abs(x_previous - x_current) >= threshold and
                 x_current > lower[index] and
                 x_current < upper[index] and
                 not (exception - threshold <= x_current and x_current <= exception + threshold)):
@@ -426,7 +427,7 @@ def count_constant_components_1D(x, threshold = 1e-2, lower = -np.inf, upper = n
     
         return counter
 
-def count_constant_components_2D(x, threshold = 1e-2, lower = -np.inf, upper = np.inf):
+def count_constant_components_2D(x, threshold = 1e-2, lower = -xp.inf, upper = xp.inf):
         """ Returns the number of piecewise constant components in a two-dimensional array
 
         Parameters
@@ -444,13 +445,13 @@ def count_constant_components_2D(x, threshold = 1e-2, lower = -np.inf, upper = n
             Piecewise constant components above this value are not counted.
         """
 
-        if not isinstance(lower, np.ndarray):
-            lower = lower*np.ones_like(x)
+        if not isinstance(lower, xp.ndarray):
+            lower = lower*xp.ones_like(x)
 
-        if not isinstance(upper, np.ndarray):
-            upper = upper*np.ones_like(x)
+        if not isinstance(upper, xp.ndarray):
+            upper = upper*xp.ones_like(x)
 
-        filled = np.zeros_like(x, dtype = int)
+        filled = xp.zeros_like(x, dtype = int)
         counter = 0
 
         def process(i, j):
@@ -460,16 +461,16 @@ def count_constant_components_2D(x, threshold = 1e-2, lower = -np.inf, upper = n
             while len(queue) != 0:
                 (icur, jcur) = queue.pop(0)
                 
-                if icur > 0 and filled[icur - 1, jcur] == 0 and abs(x[icur, jcur] - x[icur - 1, jcur]) <= threshold:
+                if icur > 0 and filled[icur - 1, jcur] == 0 and xp.abs(x[icur, jcur] - x[icur - 1, jcur]) <= threshold:
                     filled[icur - 1, jcur] = 1
                     queue.append((icur-1, jcur))
-                if jcur > 0 and filled[icur, jcur-1] == 0 and abs(x[icur, jcur] - x[icur, jcur - 1]) <= threshold:
+                if jcur > 0 and filled[icur, jcur-1] == 0 and xp.abs(x[icur, jcur] - x[icur, jcur - 1]) <= threshold:
                     filled[icur, jcur-1] = 1
                     queue.append((icur, jcur-1))
-                if icur < x.shape[0]-1 and filled[icur + 1, jcur] == 0 and abs(x[icur, jcur] - x[icur + 1, jcur]) <= threshold:
+                if icur < x.shape[0]-1 and filled[icur + 1, jcur] == 0 and xp.abs(x[icur, jcur] - x[icur + 1, jcur]) <= threshold:
                     filled[icur + 1, jcur] = 1
                     queue.append((icur+1, jcur))
-                if jcur < x.shape[1]-1 and filled[icur, jcur + 1] == 0 and abs(x[icur, jcur] - x[icur, jcur + 1]) <= threshold:
+                if jcur < x.shape[1]-1 and filled[icur, jcur + 1] == 0 and xp.abs(x[icur, jcur] - x[icur, jcur + 1]) <= threshold:
                     filled[icur, jcur + 1] = 1
                     queue.append((icur, jcur+1))
         
@@ -505,12 +506,12 @@ def piecewise_linear_1D_DoF(x, threshold = 1e-5, exception_zero = False, excepti
         differences = x[1:] - x[:-1]
         double_differences = differences[1:] - differences[:-1]
 
-        joints = [True] + [np.abs(d) >= threshold for d in double_differences] + [True]
+        joints = [True] + [xp.abs(d) >= threshold for d in double_differences] + [True]
         
         if not exception_zero and not exception_flat:
-            return np.sum(joints)
+            return xp.sum(joints)
         elif exception_zero:
-            return np.sum(joints and [np.abs(v) < threshold for v in x])
+            return xp.sum(joints and [xp.abs(v) < threshold for v in x])
         elif exception_flat:
             prev_joint = None
             counter = 0
@@ -520,7 +521,7 @@ def piecewise_linear_1D_DoF(x, threshold = 1e-5, exception_zero = False, excepti
                     if prev_joint is None:
                         prev_joint = i
                     else:
-                        if np.abs(x[i] - x[prev_joint]) < threshold:
+                        if xp.abs(x[i] - x[prev_joint]) < threshold:
                             counter -= 1
                         prev_joint = i
             return counter
