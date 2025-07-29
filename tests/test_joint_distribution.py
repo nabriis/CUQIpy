@@ -9,8 +9,8 @@ def test_joint_dist_dim_geometry():
 
     # Bayesian model
     d = cuqi.distribution.Gamma(1, 1e-4)
-    x = cuqi.distribution.Gaussian(np.zeros(model.domain_dim), lambda d: d)
-    y = cuqi.distribution.Gaussian(model, 1)
+    x = cuqi.distribution.Gaussian(np.zeros(model.domain_dim), lambda d: d, geometry=model.domain_dim)
+    y = cuqi.distribution.Gaussian(model, 1, geometry=model.domain_dim)
 
     # Joint distribution
     J = cuqi.distribution.JointDistribution(d, x, y)
@@ -41,7 +41,7 @@ def test_joint_dist_dim_geometry():
     [
         cuqi.distribution.Gamma(1, 1e-4, name="d"),
         cuqi.distribution.Gamma(1, 1e-2, name="l"),
-        cuqi.distribution.Gaussian(np.zeros(8), lambda d: d, name="x"),
+        cuqi.distribution.Gaussian(np.zeros(8), lambda d: d, name="x", geometry=8),
         cuqi.distribution.Gaussian(
             mean=cuqi.testproblem.Deconvolution1D(dim=8).model,
             cov=lambda l: l,
@@ -52,7 +52,7 @@ def test_joint_dist_dim_geometry():
         cuqi.distribution.Normal(0, 1e-2, name="z"),
         cuqi.distribution.Gamma(1, lambda z: abs(z), name="d"),
         cuqi.distribution.Gamma(lambda z: z, 1e-2, name="l"),
-        cuqi.distribution.Gaussian(np.zeros(8), lambda d: d, name="x"),
+        cuqi.distribution.Gaussian(np.zeros(8), lambda d: d, name="x", geometry=8),
         cuqi.distribution.Gaussian(
             mean=cuqi.testproblem.Deconvolution1D(dim=8).model,
             cov=lambda l: l,
@@ -91,13 +91,13 @@ def test_joint_dist_logd(densities):
 @pytest.mark.parametrize("densities", [
     [
         cuqi.distribution.Gamma(1, 1e-4, name="x"),
-        cuqi.distribution.Gaussian(0, lambda x:x, name="z"),
+        cuqi.distribution.Gaussian(0, lambda x:x, name="z", geometry=8),
         cuqi.distribution.Normal(0, lambda x:x, name="y")
     ],
     [
         cuqi.distribution.Gamma(1, 1e-4, name="d"),
         cuqi.distribution.Gamma(1, 1e-2, name="l"),
-        cuqi.distribution.Gaussian(np.zeros(8), lambda d: d, name="x"),
+        cuqi.distribution.Gaussian(np.zeros(8), lambda d: d, name="x", geometry=8),
         cuqi.distribution.Gaussian(
             mean=cuqi.testproblem.Deconvolution1D(dim=8).model,
             cov=lambda l: l,
@@ -108,7 +108,7 @@ def test_joint_dist_logd(densities):
         cuqi.distribution.Normal(0, 1e-2, name="z"),
         cuqi.distribution.Gamma(1, lambda z: abs(z), name="d"),
         cuqi.distribution.Gamma(lambda z: z, 1e-2, name="l"),
-        cuqi.distribution.Gaussian(np.zeros(8), lambda d: d, name="x"),
+        cuqi.distribution.Gaussian(np.zeros(8), lambda d: d, name="x", geometry=8),
         cuqi.distribution.Gaussian(
             mean=cuqi.testproblem.Deconvolution1D(dim=8).model,
             cov=lambda l: l,
@@ -216,7 +216,7 @@ def hierarchical_joint(main_dim=8):
         cuqi.distribution.Normal(0, 1e-2, name="z"),
         cuqi.distribution.Gamma(1, lambda z: abs(z), name="d"),
         cuqi.distribution.Gamma(lambda z: z, 1e-2, name="l"),
-        cuqi.distribution.Gaussian(np.zeros(main_dim), lambda d: d, name="x"),
+        cuqi.distribution.Gaussian(np.zeros(main_dim), lambda d: d, name="x", geometry=main_dim),
         cuqi.distribution.Gaussian(
             mean=cuqi.testproblem.Deconvolution1D(dim=main_dim).model,
             cov=lambda l: l,
@@ -325,7 +325,7 @@ def test_MultipleLikelihoodPosterior_should_raise_if_names_do_not_match():
         cuqi.distribution.JointDistribution(
             cuqi.distribution.Uniform(0, 10, name="d"),
             cuqi.distribution.Uniform(0, 5, name="s"),
-            cuqi.distribution.Gaussian(np.zeros(8), lambda d: d, name="x"),
+            cuqi.distribution.Gaussian(np.zeros(8), lambda d: d, name="x", geometry=8),
             cuqi.distribution.Gaussian(
                 mean=cuqi.testproblem.Deconvolution1D(dim=8).model,
                 cov=lambda s: s,
@@ -343,7 +343,7 @@ def test_MultipleLikelihoodPosterior_should_raise_if_names_do_not_match():
         cuqi.distribution.JointDistribution(
             cuqi.distribution.Uniform(0, 10, name="d"),
             cuqi.distribution.Uniform(0, 5, name="s"),
-            cuqi.distribution.Gaussian(np.zeros(8), lambda d: d, name="x"),
+            cuqi.distribution.Gaussian(np.zeros(8), lambda d: d, name="x", geometry=8),
             cuqi.distribution.Gaussian(
                 mean=cuqi.testproblem.Deconvolution1D(dim=8).model,
                 cov=lambda s: s,

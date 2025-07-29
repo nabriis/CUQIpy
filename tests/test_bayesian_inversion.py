@@ -152,9 +152,9 @@ def test_Bayesian_inversion_hierarchical(TP_type: BayesianProblem, phantom: str,
 
     # data distribution
     if len(priors) == 1: # No hyperparameters
-        data_dist = Gaussian(A@priors[0], 400, name="y")
+        data_dist = Gaussian(A@priors[0], 400, name="y", geometry=128)
     else:
-        data_dist = Gaussian(A@priors[0], lambda l: 1/l, name="y")
+        data_dist = Gaussian(A@priors[0], lambda l: 1/l, name="y", geometry=128)
 
     # Bayesian problem
     BP = BayesianProblem(data_dist, *priors).set_data(y=y_data)

@@ -29,7 +29,7 @@ def posterior_2D_components():
     # Create a CUQIpy prior
     x = Gaussian(mean=np.array([0.0, 0.0]), cov=np.array([1.0, 1.0]))
     # Create a CUQIpy likelihood
-    y = Gaussian(A@x, cov=0.1)
+    y = Gaussian(A@x, cov=0.1, geometry=2)
     return x, y
 
 

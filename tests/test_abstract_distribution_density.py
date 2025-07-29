@@ -22,20 +22,20 @@ def test_conditioning_through_likelihood(): #TODO. Add more dists to test here!
         2) that the cov @property setter is invoked after setting cov directly (here cov getter returned None).
     """
     model = cuqi.model.Model(lambda x:x, 1, 1) #Simple 1 par model
-    dist = cuqi.distribution.Gaussian(mean=model)
+    dist = cuqi.distribution.Gaussian(mean=model, geometry=1)
     likelihood = dist.to_likelihood(5)
     likelihood.logd(10, 5)
     assert(likelihood.get_parameter_names() == ['cov', 'x'])
 
 def test_conditioning_wrong_keyword():
     """ This checks if we raise error if keyword is not a conditioning variable. """
-    x = cuqi.distribution.Gaussian(mean=1)
+    x = cuqi.distribution.Gaussian(mean=1, geometry=1)
     with pytest.raises(ValueError):
         x(name="hey") #Should expect value-error since name not conditioning variable.
 
 def test_conditioning_arg_as_mutable_var():
     """ This checks if we raise error if 2 args are given for a distribution that has no conditioning variables. """
-    x = cuqi.distribution.Gaussian(mean=1, cov=1)
+    x = cuqi.distribution.Gaussian(mean=1, cov=1, geometry=1)
     with pytest.raises(ValueError):
         x(5, 3) #Should expect value-error since no cond vars
 
@@ -52,7 +52,7 @@ def test_conditioning_on_main_parameter():
 
 def test_conditioning_kwarg_as_mutable_var():
     """ This checks if we allow kwargs for a distribution that has no conditioning variables. """
-    x = cuqi.distribution.Gaussian(mean=1, cov=1)
+    x = cuqi.distribution.Gaussian(mean=1, cov=1, geometry=1)
     with pytest.raises(ValueError):
         x = x(cov=2) #This should raise error since no cond vars
 
@@ -145,7 +145,7 @@ def test_logd_err_handling():
 
 def test_logd_err_handling_single_cond_var():
     """ This tests if logp correctly identifies errors in the input """
-    x = cuqi.distribution.Gaussian(0, cov=lambda s:s)
+    x = cuqi.distribution.Gaussian(0, cov=lambda s:s, geometry=1)
 
     # Test that we raise error if we don't provide all parameters
     with pytest.raises(ValueError, match=r"To evaluate the log density all conditioning variables and main"):
@@ -161,7 +161,7 @@ def test_logd_err_handling_single_cond_var():
 
 def test_sample_conditional_err_handling():
     """ Test if conditional distributions correctly identify errors when sampling """
-    x = cuqi.distribution.Gaussian(0, lambda s:s)
+    x = cuqi.distribution.Gaussian(0, lambda s:s, geometry=1)
 
     # Test that we raise error if we don't provide all parameters
     with pytest.raises(ValueError, match=r"Missing conditioning variables:"):
