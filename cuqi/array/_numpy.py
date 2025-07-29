@@ -42,6 +42,7 @@ finfo = np.finfo
 nan = np.nan
 inf = np.inf
 pi = np.pi
+matrix = np.matrix
 # ... (add more as needed)
 
 # Linalg API
