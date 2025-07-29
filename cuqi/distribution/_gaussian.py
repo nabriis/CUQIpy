@@ -99,24 +99,45 @@ class Gaussian(Distribution):
 
         # If everything is None we default to covariance as the mutable variables
         # If more than one of the matrices are given we throw an error
-        if (cov is not None) + (prec is not None) + (sqrtprec is not None) + (sqrtcov is not None) == 0:
+        n_given = (cov is not None) + (prec is not None) + (sqrtprec is not None) + (sqrtcov is not None)
+        if n_given == 0:
             self._mutable_vars = ['mean', 'cov']
             self.cov = cov
-        elif (cov is not None) + (prec is not None) + (sqrtprec is not None) + (sqrtcov is not None) != 1:
+        elif n_given != 1:
             raise ValueError("Exactly one of 'cov', 'prec', 'sqrtcov', or 'sqrtprec' may be specified")
         else:
             # This sets the mutable variables according to which matrix is given
             if cov is not None:
-                self._mutable_vars = ['mean', 'cov']
+                if mean is None:
+                    self._mutable_vars = ['mean']
+                elif cov is None:
+                    self._mutable_vars = ['cov']
+                else:
+                    self._mutable_vars = []
                 self.cov = cov
             elif prec is not None:
-                self._mutable_vars = ['mean', 'prec']
+                if mean is None:
+                    self._mutable_vars = ['mean']
+                elif prec is None:
+                    self._mutable_vars = ['prec']
+                else:
+                    self._mutable_vars = []
                 self.prec = prec
             elif sqrtcov is not None:
-                self._mutable_vars = ['mean', 'sqrtcov']
+                if mean is None:
+                    self._mutable_vars = ['mean']
+                elif sqrtcov is None:
+                    self._mutable_vars = ['sqrtcov']
+                else:
+                    self._mutable_vars = []
                 self.sqrtcov = sqrtcov
             elif sqrtprec is not None:
-                self._mutable_vars = ['mean', 'sqrtprec']
+                if mean is None:
+                    self._mutable_vars = ['mean']
+                elif sqrtprec is None:
+                    self._mutable_vars = ['sqrtprec']
+                else:
+                    self._mutable_vars = []
                 self.sqrtprec = sqrtprec
 
         self._check_geometry_consistency()
@@ -350,16 +371,10 @@ class Gaussian(Distribution):
         return s
 
     def get_mutable_variables(self):
-        # Always return both for default Gaussian
-        if hasattr(self, '_mutable_vars') and self._mutable_vars == ['mean', 'cov']:
-            return ['mean', 'cov']
         return getattr(self, '_mutable_vars', ['mean', 'cov'])
 
     def get_conditioning_variables(self):
-        # Always return both for default Gaussian
-        if hasattr(self, '_mutable_vars') and self._mutable_vars == ['mean', 'cov']:
-            return ['mean', 'cov']
-        return getattr(self, '_mutable_vars', ['mean', 'cov'])
+        return self.get_mutable_variables()
 
 # ======= Helper functions for Gaussian distribution =======
 def get_sqrtprec_from_cov(dim, cov, sparse_flag):
