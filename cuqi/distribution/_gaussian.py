@@ -111,32 +111,36 @@ class Gaussian(Distribution):
                     self.cov = cov
                     self._mutable_vars = []
                 else:
-                    self._mutable_vars = ['mean']
+                    self._mutable_vars = ['mean', 'cov']
                     self.cov = cov
+                    self._mutable_vars = ['mean']
             elif prec is not None:
                 if mean is not None:
                     self._mutable_vars = ['mean', 'prec']
                     self.prec = prec
                     self._mutable_vars = []
                 else:
-                    self._mutable_vars = ['mean']
+                    self._mutable_vars = ['mean', 'prec']
                     self.prec = prec
+                    self._mutable_vars = ['mean']
             elif sqrtcov is not None:
                 if mean is not None:
                     self._mutable_vars = ['mean', 'sqrtcov']
                     self.sqrtcov = sqrtcov
                     self._mutable_vars = []
                 else:
-                    self._mutable_vars = ['mean']
+                    self._mutable_vars = ['mean', 'sqrtcov']
                     self.sqrtcov = sqrtcov
+                    self._mutable_vars = ['mean']
             elif sqrtprec is not None:
                 if mean is not None:
                     self._mutable_vars = ['mean', 'sqrtprec']
                     self.sqrtprec = sqrtprec
                     self._mutable_vars = []
                 else:
-                    self._mutable_vars = ['mean']
+                    self._mutable_vars = ['mean', 'sqrtprec']
                     self.sqrtprec = sqrtprec
+                    self._mutable_vars = ['mean']
 
         self._check_geometry_consistency()
 
@@ -147,7 +151,11 @@ class Gaussian(Distribution):
 
     @mean.setter
     def mean(self, value):
-        self._mean = force_ndarray(value, flatten=True)
+        # Allow callable or model as mean
+        if callable(value) or hasattr(value, 'forward'):
+            self._mean = value
+        else:
+            self._mean = force_ndarray(value, flatten=True)
 
     @property
     def cov(self):
@@ -159,9 +167,16 @@ class Gaussian(Distribution):
     @cov.setter
     def cov(self, value):
         if 'cov' not in self._mutable_vars:
-            raise ValueError(f"Mutable variables are {self._mutable_vars}")        
+            # Allow callable or model as cov
+            if callable(value) or hasattr(value, 'forward'):
+                self._cov = value
+                return
+            raise ValueError(f"Mutable variables are {self._mutable_vars}")
+        if callable(value) or hasattr(value, 'forward'):
+            self._cov = value
+            return
         value = force_ndarray(value)
-        self._cov = value       
+        self._cov = value
         if (value is not None) and (not callable(value)):
             if self.dim > config.MIN_DIM_SPARSE:
                 sparse_flag = True # do sparse computations
@@ -172,7 +187,6 @@ class Gaussian(Distribution):
             self._sqrtprec = sqrtprec
             self._logdet = logdet
             self._rank = rank
-        # Ensure mean is set for scalar input
         if not hasattr(self, '_mean') or self._mean is None:
             self._mean = xp.zeros(self.dim)
 
