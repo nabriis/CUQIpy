@@ -20,6 +20,24 @@ concatenate = np.concatenate
 stack = np.stack
 split = np.split
 copy = np.copy
+sqrt = np.sqrt
+exp = np.exp
+log = np.log
+dot = np.dot
+mean = np.mean
+std = np.std
+sum = np.sum
+min = np.min
+max = np.max
+abs = np.abs
+eye = np.eye
+diag = np.diag
+vstack = np.vstack
+hstack = np.hstack
+meshgrid = np.meshgrid
+zeros_like = np.zeros_like
+ones_like = np.ones_like
+copy = np.copy
 # ... (add more as needed)
 
 # Linalg API
