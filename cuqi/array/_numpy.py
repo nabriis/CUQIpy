@@ -38,6 +38,7 @@ meshgrid = np.meshgrid
 zeros_like = np.zeros_like
 ones_like = np.ones_like
 copy = np.copy
+finfo = np.finfo
 # ... (add more as needed)
 
 # Linalg API
