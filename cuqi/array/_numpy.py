@@ -46,6 +46,10 @@ matrix = np.matrix
 identity = np.identity
 size = np.size
 shape = np.shape
+count_nonzero = np.count_nonzero
+allclose = np.allclose
+tril = np.tril
+newaxis = np.newaxis
 # ... (add more as needed)
 
 # Linalg API
