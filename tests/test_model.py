@@ -649,11 +649,9 @@ class MultipleInputTestModel:
         kappa = np.ones(dim)  # kappa is the diffusivity
 
         # Build the differential operator (depending on kappa_scale, a scale of the diffusivity)
-        FOFD_operator = (
-            cuqi.operator.FirstOrderFiniteDifference(dim - 1, bc_type="zero", dx=dx)
-            .get_matrix()
-            .todense()
-        )
+        matrix = cuqi.operator.FirstOrderFiniteDifference(dim - 1, bc_type="zero", dx=dx).get_matrix()
+        # Handle both sparse and dense matrices for backwards compatibility
+        FOFD_operator = matrix.todense() if hasattr(matrix, 'todense') else matrix
         diff_operator = (
             lambda kappa_scale: FOFD_operator.T
             @ np.diag(kappa_scale * kappa)
@@ -1271,6 +1269,12 @@ def test_forward_of_multiple_input_model_is_correct(test_model, test_data):
             assert np.allclose(
                 fwd_output.samples, test_data.expected_fwd_output.samples
             )
+        elif isinstance(fwd_output, cuqi.array.CUQIarray):
+            # Handle CUQIarray objects for backwards compatibility
+            if isinstance(test_data.expected_fwd_output, cuqi.array.CUQIarray):
+                assert np.allclose(fwd_output.to_numpy(), test_data.expected_fwd_output.to_numpy())
+            else:
+                assert np.allclose(fwd_output.to_numpy(), test_data.expected_fwd_output)
         else:
             raise NotImplementedError(
                 "Checks for other types of outputs not implemented."

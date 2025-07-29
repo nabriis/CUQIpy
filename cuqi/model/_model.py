@@ -984,7 +984,18 @@ class Model(object):
                 ]
             )
 
-        return grad
+        # For backwards compatibility, convert CUQIarray results to numpy arrays
+        # unless the original inputs were explicitly CUQIarray objects
+        if isinstance(grad, dict):
+            result = {}
+            for k, v in grad.items():
+                if isinstance(v, CUQIarray):
+                    result[k] = v.to_numpy()
+                else:
+                    result[k] = v
+            return result
+        else:
+            return grad.to_numpy() if isinstance(grad, CUQIarray) else grad
 
     def _check_gradient_can_be_computed(self, direction, kwargs_dict):
         """Private function that checks if the gradient can be computed. By

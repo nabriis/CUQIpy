@@ -29,6 +29,7 @@ def get_backend_functions(backend_module):
         'identity': backend_module.identity,
         'diag': backend_module.diag,
         'diagonal': backend_module.diagonal,
+        'meshgrid': backend_module.meshgrid,
         
         # Shape manipulation
         'reshape': backend_module.reshape,

@@ -96,6 +96,12 @@ class CUQIarray:
         other_array = other._array if isinstance(other, CUQIarray) else other
         return self._array ** other_array
     
+    def __matmul__(self, other):
+        """Matrix multiplication using @ operator."""
+        other_array = other._array if isinstance(other, CUQIarray) else other
+        import cuqi.array as xp
+        return xp.matmul(self._array, other_array)
+    
     # Properties that delegate to the underlying array
     @property
     def shape(self):
@@ -118,10 +124,10 @@ class CUQIarray:
         else:
             return len(self._array.shape)
     
-    def reshape(self, *args):
+    def reshape(self, *args, **kwargs):
         """Reshape the underlying array."""
         import cuqi.array as xp
-        return xp.reshape(self._array, *args)
+        return xp.reshape(self._array, *args, **kwargs)
     
     @property
     def funvals(self):

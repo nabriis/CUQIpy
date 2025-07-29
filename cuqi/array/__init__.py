@@ -101,7 +101,7 @@ __all__ = [
     # Array creation
     'array', 'zeros', 'ones', 'zeros_like', 'ones_like', 'empty', 'empty_like',
     'full', 'full_like', 'arange', 'linspace', 'logspace', 'eye', 'identity',
-    'diag', 'diagonal',
+    'diag', 'diagonal', 'meshgrid',
     
     # Shape manipulation
     'reshape', 'ravel', 'flatten', 'transpose', 'swapaxes', 'moveaxis',
