@@ -30,4 +30,9 @@ def set_backend(name):
 # Expose xp as module attribute
 sys.modules[__name__ + '.xp'] = xp
 
+# Re-export all public array functions from the selected backend
+for _name in dir(xp):
+    if not _name.startswith('_') and callable(getattr(xp, _name)):
+        globals()[_name] = getattr(xp, _name)
+
 from ._array import CUQIarray
