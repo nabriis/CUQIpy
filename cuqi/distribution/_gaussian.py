@@ -143,7 +143,7 @@ class Gaussian(Distribution):
             raise ValueError(f"Mutable variables are {self._mutable_vars}")        
         value = force_ndarray(value)
         self._cov = value       
-        if (value is not None) and (not callable(value)):  
+        if (value is not None) and (not callable(value)):
             if self.dim > config.MIN_DIM_SPARSE:
                 sparse_flag = True # do sparse computations
             else:
@@ -153,6 +153,9 @@ class Gaussian(Distribution):
             self._sqrtprec = sqrtprec
             self._logdet = logdet
             self._rank = rank
+        # Ensure mean is set for scalar input
+        if not hasattr(self, '_mean') or self._mean is None:
+            self._mean = xp.zeros(self.dim)
 
     @property
     def prec(self):
