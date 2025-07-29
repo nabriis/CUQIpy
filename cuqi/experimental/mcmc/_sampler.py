@@ -151,7 +151,8 @@ class Sampler(ABC):
     # ------------ Public methods ------------
     def get_samples(self) -> Samples:
         """ Return the samples. The internal data-structure for the samples is a dynamic list so this creates a copy. """
-        return Samples(xp.array(self._samples).T, self.target.geometry)
+        arrs = [s._array if hasattr(s, '_array') else s for s in self._samples]
+        return Samples(xp.array(arrs).T, self.target.geometry)
     
     def reinitialize(self):
         """ Re-initialize the sampler. This clears the state and history and initializes the sampler again by setting state and history to their original values. """

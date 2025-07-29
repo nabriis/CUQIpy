@@ -235,7 +235,9 @@ class HybridGibbs:
     def get_samples(self) -> Dict[str, Samples]:
         samples_object = JointSamples()
         for par_name in self.par_names:
-            samples_array = xp.array(self.samples[par_name]).T
+            # Convert all elements to raw arrays if needed
+            arrs = [s._array if hasattr(s, '_array') else s for s in self.samples[par_name]]
+            samples_array = xp.array(arrs).T
             samples_object[par_name] = Samples(samples_array, self.target.get_density(par_name).geometry)
         return samples_object
     
