@@ -614,6 +614,9 @@ def test_state_is_fully_updated_after_warmup_step(sampler: cuqi.experimental.mcm
         if isinstance(initial_value, np.ndarray) and isinstance(updated_value, np.ndarray):
             if np.allclose(updated_value, initial_value):
                 failed_updates[key] = f"(Arrays are equal)"
+        elif hasattr(initial_value, '__array__') and hasattr(updated_value, '__array__'):
+            if np.allclose(np.asarray(updated_value), np.asarray(initial_value)):
+                failed_updates[key] = f"(Array-like objects are equal)"
         else:
             if updated_value == initial_value:
                 failed_updates[key] = f"Initial: {initial_value}, Updated: {updated_value}"

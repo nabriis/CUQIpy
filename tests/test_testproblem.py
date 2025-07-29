@@ -18,7 +18,7 @@ from scipy.ndimage import convolve
 ])
 def test_Deconvolution_MatrixNorm_regression(dim,kernel,kernel_param,expected):
     tp = cuqi.testproblem.Deconvolution1D(dim=dim, PSF=kernel, PSF_param=kernel_param, use_legacy=True)
-    assert np.linalg.norm(tp.model.get_matrix()) == approx(expected,rel=1e-4)
+    assert np.isclose(np.linalg.norm(tp.model.get_matrix()), expected, rtol=1e-4)
 
 @pytest.mark.parametrize("dim,phantom,phantom_param,expected",[
     (36,"Gauss",None,2.0944),

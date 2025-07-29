@@ -105,8 +105,8 @@ def test_solver_signature(solve_kwargs, expected_info):
     assert isinstance(sol, np.ndarray) 
     # assert either info is None (the case when the solver only returns the solution)
     # or each element of info equals to the corresponding element of expected_info (the case in which the solver returned one or more info variables) 
-    assert (expected_info == None and info == None) \
-               or np.all( [np.all(expected_info[i] == info[i]) for i in range(len(info))]) 
+    assert (expected_info is None and info is None) \
+           or all(np.array_equal(expected_info[i], info[i]) for i in range(len(info))) 
 
 def test_mixed_BCs():
     #%% Poisson equation in 1D (mixed Dirichlet and Neumann BCs):

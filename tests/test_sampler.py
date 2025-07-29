@@ -150,8 +150,7 @@ def test_sampler_geometry_assignment():
     MCMC_sampler = cuqi.sampler.CWMH(target, proposal, scale, x0)
     samples = MCMC_sampler.sample(10,2)
 
-    assert(MCMC_sampler.geometry == target.geometry and\
-           MCMC_sampler.geometry == samples.geometry)
+    assert (MCMC_sampler.geometry is target.geometry and MCMC_sampler.geometry is samples.geometry)
 
 def test_sampler_UserDefined_basic():
     """
