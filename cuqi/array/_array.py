@@ -96,6 +96,22 @@ class CUQIarray:
         other_array = other._array if isinstance(other, CUQIarray) else other
         return self._array ** other_array
     
+    def __matmul__(self, other):
+        """Matrix multiplication using @ operator, supporting CUQIarray and backend arrays."""
+        other_array = other._array if isinstance(other, CUQIarray) else other
+        result = self._array @ other_array
+        import numpy as np
+        arr = np.asarray(result)
+        if arr.ndim == 0:
+            return arr.item()  # Return as a Python scalar
+        elif arr.ndim == 1:
+            try:
+                return CUQIarray(result, is_par=self.is_par, geometry=self.geometry)
+            except Exception:
+                return result
+        else:
+            return result
+    
     # Properties that delegate to the underlying array
     @property
     def shape(self):

@@ -1,7 +1,7 @@
+import numpy as np
 from cuqi.array import CUQIarray
 from cuqi.samples import Samples
 from cuqi.geometry import Continuous1D, Discrete
-import numpy as np
 import scipy as sp
 import cuqi
 import pytest
@@ -652,8 +652,9 @@ class MultipleInputTestModel:
         FOFD_operator = (
             cuqi.operator.FirstOrderFiniteDifference(dim - 1, bc_type="zero", dx=dx)
             .get_matrix()
-            .todense()
+            #.todense()
         )
+        FOFD_operator = np.asarray(FOFD_operator)
         diff_operator = (
             lambda kappa_scale: FOFD_operator.T
             @ np.diag(kappa_scale * kappa)
