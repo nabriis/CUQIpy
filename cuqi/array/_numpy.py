@@ -50,6 +50,7 @@ count_nonzero = np.count_nonzero
 allclose = np.allclose
 tril = np.tril
 newaxis = np.newaxis
+square = np.square
 # ... (add more as needed)
 
 # Linalg API
