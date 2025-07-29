@@ -39,6 +39,9 @@ zeros_like = np.zeros_like
 ones_like = np.ones_like
 copy = np.copy
 finfo = np.finfo
+nan = np.nan
+inf = np.inf
+pi = np.pi
 # ... (add more as needed)
 
 # Linalg API
