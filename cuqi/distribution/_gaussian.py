@@ -97,8 +97,6 @@ class Gaussian(Distribution):
 
         self.mean = mean
 
-        # If everything is None we default to covariance as the mutable variables
-        # If more than one of the matrices are given we throw an error
         n_given = (cov is not None) + (prec is not None) + (sqrtprec is not None) + (sqrtcov is not None)
         if n_given == 0:
             self._mutable_vars = ['mean', 'cov']
@@ -108,37 +106,37 @@ class Gaussian(Distribution):
         else:
             # This sets the mutable variables according to which matrix is given
             if cov is not None:
-                if mean is None:
-                    self._mutable_vars = ['mean']
-                elif cov is None:
-                    self._mutable_vars = ['cov']
-                else:
+                if mean is not None:
+                    self._mutable_vars = ['mean', 'cov']
+                    self.cov = cov
                     self._mutable_vars = []
-                self.cov = cov
+                else:
+                    self._mutable_vars = ['mean']
+                    self.cov = cov
             elif prec is not None:
-                if mean is None:
-                    self._mutable_vars = ['mean']
-                elif prec is None:
-                    self._mutable_vars = ['prec']
-                else:
+                if mean is not None:
+                    self._mutable_vars = ['mean', 'prec']
+                    self.prec = prec
                     self._mutable_vars = []
-                self.prec = prec
+                else:
+                    self._mutable_vars = ['mean']
+                    self.prec = prec
             elif sqrtcov is not None:
-                if mean is None:
-                    self._mutable_vars = ['mean']
-                elif sqrtcov is None:
-                    self._mutable_vars = ['sqrtcov']
-                else:
+                if mean is not None:
+                    self._mutable_vars = ['mean', 'sqrtcov']
+                    self.sqrtcov = sqrtcov
                     self._mutable_vars = []
-                self.sqrtcov = sqrtcov
+                else:
+                    self._mutable_vars = ['mean']
+                    self.sqrtcov = sqrtcov
             elif sqrtprec is not None:
-                if mean is None:
-                    self._mutable_vars = ['mean']
-                elif sqrtprec is None:
-                    self._mutable_vars = ['sqrtprec']
-                else:
+                if mean is not None:
+                    self._mutable_vars = ['mean', 'sqrtprec']
+                    self.sqrtprec = sqrtprec
                     self._mutable_vars = []
-                self.sqrtprec = sqrtprec
+                else:
+                    self._mutable_vars = ['mean']
+                    self.sqrtprec = sqrtprec
 
         self._check_geometry_consistency()
 
