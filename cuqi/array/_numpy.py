@@ -4,6 +4,7 @@ import scipy.linalg
 import scipy.stats
 import scipy.sparse
 import numpy.random
+import scipy.ndimage
 
 # Array API
 array = np.array
@@ -51,6 +52,11 @@ allclose = np.allclose
 tril = np.tril
 newaxis = np.newaxis
 square = np.square
+any = np.any
+all = np.all
+minimum = np.minimum
+isnan = np.isnan
+ndimage = scipy.ndimage
 # ... (add more as needed)
 
 # Linalg API
