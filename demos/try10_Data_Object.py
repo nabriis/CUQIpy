@@ -57,7 +57,7 @@ z.plot()
 
 #%%
 noise_std = 0.05
-data_dist = Gaussian(model, noise_std, np.eye(dim))
+data_dist = Gaussian(model, noise_std, np.eye(dim), geometry=model.range_geometry)
 
 data_dist(x=np.zeros(dim)).sample(5).plot()
 plt.title('Noise samples'); plt.show()

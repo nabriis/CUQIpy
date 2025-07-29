@@ -19,7 +19,7 @@ x_true = TP.exactSolution
 
 # %%
 # Define Gaussian likelihood and prior
-likelihood = cuqi.distribution.Gaussian(model, cov, name="y").to_likelihood(data)
+likelihood = cuqi.distribution.Gaussian(model, cov, name="y", geometry=n).to_likelihood(data)
 
 var = 0.2
 prior = cuqi.distribution.Gaussian(0, var*np.ones(n), name="x")
