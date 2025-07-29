@@ -4,7 +4,6 @@ sys.path.append("..")
 import cuqi
 import numpy as np
 import matplotlib.pyplot as plt
-import scipy
 import cuqi.operator
 # %%
 location = 0

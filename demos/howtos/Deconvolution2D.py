@@ -7,7 +7,6 @@ In this example we show how to quantify the uncertainty of a solution to a 2D de
 # %% 
 # First we import the modules needed.
 
-import numpy as np
 from cuqi.testproblem import Deconvolution2D
 from cuqi.distribution import Gaussian, LMRF
 from cuqi.problem import BayesianProblem

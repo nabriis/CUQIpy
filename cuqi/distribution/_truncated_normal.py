@@ -1,5 +1,4 @@
 import numpy as np
-from scipy.special import erf
 from cuqi.utilities import force_ndarray
 from cuqi.distribution import Distribution
 from cuqi.distribution import Normal

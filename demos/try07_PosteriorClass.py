@@ -1,15 +1,12 @@
 #%%
 import sys
 sys.path.append("../")
-import time
 import numpy as np
 import matplotlib.pyplot as plt
 
 # myfuns
 import cuqi
-from cuqi.sampler import pCN, MH
-from cuqi.distribution import Gaussian, Posterior, DistributionGallery
-from cuqi.samples import Samples
+from cuqi.sampler import MH
 #
 
 

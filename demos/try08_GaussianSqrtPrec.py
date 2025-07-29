@@ -2,9 +2,7 @@
 import sys
 sys.path.append("..") 
 import numpy as np
-import scipy.io as spio
 import scipy.sparse as sps
-from scipy.sparse import diags
 import matplotlib.pyplot as plt
 import cuqi
 

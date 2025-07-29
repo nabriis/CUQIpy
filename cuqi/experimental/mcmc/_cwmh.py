@@ -1,7 +1,6 @@
 import numpy as np
 import cuqi
 from cuqi.experimental.mcmc import ProposalBasedSampler
-from cuqi.array import CUQIarray
 from numbers import Number
 
 class CWMH(ProposalBasedSampler):

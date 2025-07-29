@@ -1,5 +1,4 @@
 import numpy as np
-import scipy.stats as sps
 import scipy.special as special
 from cuqi.distribution import Distribution
 from cuqi.utilities import force_ndarray

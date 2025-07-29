@@ -1,7 +1,7 @@
 import numpy as np
 import scipy as sp
 
-from cuqi.solver import ScipyLBFGSB, ScipyMinimizer, ScipyLSQ, ScipyLinearLSQ, CGLS, LM, FISTA, ADMM, ProximalL1, ProjectNonnegative, ProjectBox
+from cuqi.solver import ScipyLBFGSB, ScipyMinimizer, ScipyLSQ, ScipyLinearLSQ, CGLS, LM, FISTA, ADMM, ProximalL1, ProjectNonnegative
 from scipy.optimize import lsq_linear
 
 

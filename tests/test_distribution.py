@@ -1,4 +1,3 @@
-from math import isnan
 import cuqi
 import numpy as np
 import scipy as sp

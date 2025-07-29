@@ -7,8 +7,6 @@
 import sys
 sys.path.append("..") 
 import numpy as np
-import scipy as sp
-import scipy.stats as sps
 #
 import cuqi
 import matplotlib.pyplot as plt

@@ -93,7 +93,7 @@ class Posterior(Distribution):
 
     def _gradient(self, x):
         #Avoid complicated geometries that change the gradient.
-        if not type(self.geometry) in _get_identity_geometries() and\
+        if type(self.geometry) not in _get_identity_geometries() and\
            not hasattr(self.geometry, 'gradient'):
             raise NotImplementedError("Gradient not implemented for distribution {} with geometry {}".format(self,self.geometry))
             
@@ -108,7 +108,7 @@ class Posterior(Distribution):
         return self.likelihood.model
 
     def __repr__(self):
-        msg = f"Posterior(\n"
+        msg = "Posterior(\n"
         msg += "    Equation:\n"
         msg += f"\t p({self.prior.name}|{self.likelihood.name}) ∝ L({self.prior.name}|{self.likelihood.name})p({self.prior.name})\n"
         msg += "    Densities:\n"

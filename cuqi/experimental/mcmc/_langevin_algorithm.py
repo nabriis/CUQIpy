@@ -2,7 +2,6 @@ import numpy as np
 import cuqi
 from cuqi.experimental.mcmc import Sampler
 from cuqi.implicitprior import RestorationPrior, MoreauYoshidaPrior
-from cuqi.array import CUQIarray
 from copy import copy
 
 class ULA(Sampler): # Refactor to Proposal-based sampler?

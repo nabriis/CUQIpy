@@ -2,12 +2,10 @@ from cuqi.array import CUQIarray
 from cuqi.samples import Samples
 from cuqi.geometry import Continuous1D, Discrete
 import numpy as np
-import scipy as sp
 import cuqi
 import pytest
-from scipy import optimize
 from copy import copy, deepcopy
-from cuqi.geometry import _identity_geometries, _DefaultGeometry1D, _DefaultGeometry2D, Geometry, Discrete, Image2D, KLExpansion
+from cuqi.geometry import _identity_geometries, _DefaultGeometry1D, _DefaultGeometry2D, Image2D
 from cuqi.utilities import force_ndarray
 from cuqi.experimental.geometry import _ProductGeometry
 

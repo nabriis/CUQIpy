@@ -368,9 +368,9 @@ class RandomVariable:
         parameter_strings = "\n".join(["\t"+line for line in parameter_strings.split("\n")])
         # Print parameter strings with newlines
         if self.is_transformed:
-            title = f"Transformed Random Variable"
+            title = "Transformed Random Variable"
         else:
-            title = f""
+            title = ""
         if self.is_transformed:
             body = (
                 f"\n"

@@ -132,13 +132,13 @@ class Gaussian(Distribution):
     @property
     def cov(self):
         """ Covariance of the distribution """
-        if not hasattr(self, '_cov') or (self._cov is None and not 'cov' in self._mutable_vars):
+        if not hasattr(self, '_cov') or (self._cov is None and 'cov' not in self._mutable_vars):
             raise NotImplementedError(f"Covariance is not computed by default for a Gaussian initialized with {self.get_mutable_variables()} and dim {self.dim}. Use method compute_cov() to compute it if needed.")
         return self._cov
 
     @cov.setter
     def cov(self, value):
-        if not 'cov' in self._mutable_vars:
+        if 'cov' not in self._mutable_vars:
             raise ValueError(f"Mutable variables are {self._mutable_vars}")        
         value = force_ndarray(value)
         self._cov = value       
@@ -162,7 +162,7 @@ class Gaussian(Distribution):
 
     @prec.setter
     def prec(self, value):
-        if not 'prec' in self._mutable_vars:
+        if 'prec' not in self._mutable_vars:
             raise ValueError(f"Mutable variables are {self._mutable_vars}")        
         value = force_ndarray(value)
         self._prec = value
@@ -186,7 +186,7 @@ class Gaussian(Distribution):
 
     @sqrtcov.setter
     def sqrtcov(self, value):
-        if not 'sqrtcov' in self._mutable_vars:
+        if 'sqrtcov' not in self._mutable_vars:
             raise ValueError(f"Mutable variables are {self._mutable_vars}")        
         value = force_ndarray(value)
         self._sqrtcov = value
@@ -209,7 +209,7 @@ class Gaussian(Distribution):
 
     @sqrtprec.setter
     def sqrtprec(self, value):
-        if not 'sqrtprec' in self._mutable_vars:
+        if 'sqrtprec' not in self._mutable_vars:
             raise ValueError(f"Mutable variables are {self._mutable_vars}")        
         value = force_ndarray(value)
         self._sqrtprec = value
@@ -299,7 +299,7 @@ class Gaussian(Distribution):
 
     def _gradient(self, val, *args, **kwargs):
         #Avoid complicated geometries that change the gradient.
-        if not type(self.geometry) in _get_identity_geometries() and \
+        if type(self.geometry) not in _get_identity_geometries() and \
            not hasattr(self.geometry, 'gradient'):
             raise NotImplementedError("Gradient not implemented for distribution {} with geometry {}".format(self,self.geometry))
 

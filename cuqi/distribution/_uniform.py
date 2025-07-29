@@ -1,6 +1,5 @@
 import numpy as np
 from cuqi.distribution import Distribution
-from cuqi.geometry import Geometry
 
 class Uniform(Distribution):
 

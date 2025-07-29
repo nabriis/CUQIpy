@@ -13,7 +13,6 @@ from cuqi.likelihood import Likelihood
 from cuqi.geometry import _DefaultGeometry
 from cuqi.utilities import ProblemInfo
 from cuqi.array import CUQIarray
-import warnings
 import matplotlib.pyplot as plt
 
 from copy import copy
@@ -457,7 +456,7 @@ class BayesianProblem(object):
             # representation of the samples geometry.
             try:
                 samples.plot_ci(percent=percent, exact=exact)
-            except NotImplementedError as nie:
+            except NotImplementedError:
                 print(
                     "Unable to plot CI for samples with the underlying " +
                     f"geometry: {samples.geometry}. Plotting the CI for the " +
@@ -601,7 +600,7 @@ class BayesianProblem(object):
             
             # Run sampler
             ti = time.time()
-            x_s = MCMC.sample_adapt(Ns,Nb); #ToDo: Make results class
+            x_s = MCMC.sample_adapt(Ns,Nb) #ToDo: Make results class
             print('Elapsed time:', time.time() - ti)
         
         return x_s

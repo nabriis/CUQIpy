@@ -6,7 +6,6 @@ This tutorial will cover the basic concepts of how to analyze and visualize samp
 
 """
 # %%
-import cuqi
 
 # %%
 #

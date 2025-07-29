@@ -3,7 +3,6 @@ import sys
 sys.path.append("..")
 import cuqi
 import numpy as np
-import matplotlib.pyplot as plt
 
 # %%
 TP = cuqi.testproblem.Deconvolution1D()

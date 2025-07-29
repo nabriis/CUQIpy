@@ -1,5 +1,4 @@
 import numpy as np
-import numpy as np
 from cuqi.experimental.mcmc import Sampler
 from cuqi.array import CUQIarray
 from numbers import Number

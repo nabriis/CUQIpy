@@ -2,13 +2,11 @@ from __future__ import annotations
 import numpy as np
 from scipy.sparse import csc_matrix
 from scipy.sparse import hstack
-from scipy.linalg import solve
 from cuqi.samples import Samples
 from cuqi.array import CUQIarray
 from cuqi.geometry import Geometry, _DefaultGeometry1D, _DefaultGeometry2D,\
     _get_identity_geometries
 import cuqi
-import matplotlib.pyplot as plt
 from copy import copy
 from functools import partial
 from cuqi.utilities import force_ndarray
@@ -291,7 +289,7 @@ class Model(object):
             # tuple length should be same as the number of inputs
             if len(func) != self.number_of_inputs:
                 raise ValueError(
-                    f"The "
+                    "The "
                     + func_type.lower()
                     + f" tuple length should be {self.number_of_inputs} for model with inputs {self._non_default_args}"
                 )
@@ -909,12 +907,12 @@ class Model(object):
         # NotImplementedError will be raised if fun2par of the geometry is not
         # implemented and ValueError will be raised when imap is not set in
         # MappedGeometry
-        except ValueError as e:
+        except ValueError:
             raise ValueError(
                 error_message
                 + " ,including an implementation of imap for MappedGeometry"
             )
-        except NotImplementedError as e:
+        except NotImplementedError:
             raise NotImplementedError(error_message)
 
         # Check for other errors that may prevent computing the gradient
@@ -1006,7 +1004,7 @@ class Model(object):
         # `_get_identity_geometries()`. i.e. The Jacobian of its
         # par2fun map is not identity.
         # TODO: Add range geometry gradient to the chain rule
-        if not type(self.range_geometry) in _get_identity_geometries():
+        if type(self.range_geometry) not in _get_identity_geometries():
             raise NotImplementedError(
                 "Gradient is not implemented for model {} with range geometry {}. You can use one of the geometries in the list {}.".format(
                     self,
@@ -1029,7 +1027,7 @@ class Model(object):
         for domain_geometry in domain_geometries:
             if (
                 not hasattr(domain_geometry, "gradient")
-                and not type(domain_geometry) in _get_identity_geometries()
+                and type(domain_geometry) not in _get_identity_geometries()
             ):
                 raise NotImplementedError(
                     "Gradient is not implemented for model \n{}\nwith domain geometry (or domain geometry component) {}. The domain geometries should have gradient method or be from the geometries in the list {}.".format(

@@ -2,7 +2,7 @@ from cuqi.utilities import get_non_default_args
 from cuqi.distribution import Distribution, Gaussian
 from cuqi.solver import ProjectNonnegative, ProjectBox, ProximalL1
 from cuqi.geometry import Continuous1D, Continuous2D, Image2D
-from cuqi.operator import FirstOrderFiniteDifference, SecondOrderFiniteDifference, Operator
+from cuqi.operator import FirstOrderFiniteDifference, SecondOrderFiniteDifference
 
 import numpy as np
 import scipy.sparse as sparse

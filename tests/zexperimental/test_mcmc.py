@@ -613,7 +613,7 @@ def test_state_is_fully_updated_after_warmup_step(sampler: cuqi.experimental.mcm
         # Check all state variables are updated after warmup
         if isinstance(initial_value, np.ndarray) and isinstance(updated_value, np.ndarray):
             if np.allclose(updated_value, initial_value):
-                failed_updates[key] = f"(Arrays are equal)"
+                failed_updates[key] = "(Arrays are equal)"
         else:
             if updated_value == initial_value:
                 failed_updates[key] = f"Initial: {initial_value}, Updated: {updated_value}"

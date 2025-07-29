@@ -1,5 +1,4 @@
 # %%
-import cuqi
 import pytest
 import numpy as np
 from cuqi.geometry import Continuous1D, Discrete, MappedGeometry, Continuous2D

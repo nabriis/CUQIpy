@@ -3,7 +3,7 @@ import numpy as np
 
 import sys
 
-from cuqi.distribution import Gaussian, CMRF, Gaussian, LMRF, GMRF
+from cuqi.distribution import Gaussian, LMRF
 from cuqi.sampler import pCN
 
 import pytest

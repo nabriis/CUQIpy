@@ -2,7 +2,6 @@
 import sys
 sys.path.append("..")
 import cuqi
-import numpy as np
 # %% 2-dimensional distribution with circular shape
 dist = cuqi.distribution.DistributionGallery("CalSom91")
 sampler = cuqi.sampler.MH(dist)

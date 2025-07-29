@@ -2,7 +2,6 @@
 #%%
 import sys
 
-from numpy import random
 sys.path.append("..")
 import cuqi
 import numpy as np

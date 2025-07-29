@@ -1,5 +1,4 @@
 import numpy as np
-import scipy as sp
 import cuqi
 import pytest
 from cuqi.geometry import Continuous2D, Continuous1D

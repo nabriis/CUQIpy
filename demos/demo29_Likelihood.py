@@ -2,7 +2,6 @@
 import sys
 sys.path.append("..")
 import cuqi
-import matplotlib.pyplot as plt
 import numpy as np
 
 from cuqi.testproblem import Deconvolution1D
@@ -21,12 +20,12 @@ IP.UQ(exact=probInfo.exactSolution)
 
 # %% Posterior
 posterior = cuqi.distribution.Posterior(likelihood, prior)
-cuqi.sampler.NUTS(posterior).sample(10,5); 
+cuqi.sampler.NUTS(posterior).sample(10,5) 
 
 # %% Evaluations of likelihood and gradients are clear.
 gt = probInfo.exactSolution
-likelihood.logd(gt); # Gives value of log-likelihood function at x=gt.
-likelihood.gradient(gt); #Gives gradient of log-likelihood function at x=gt.
+likelihood.logd(gt) # Gives value of log-likelihood function at x=gt.
+likelihood.gradient(gt) #Gives gradient of log-likelihood function at x=gt.
 
 # %% User Defined likelihood works similar to distributions, but makes clear its likelihood.
 std = 0.2
@@ -43,8 +42,8 @@ x_ML, info2  = cuqi.solver.maximize(likelihood.logd, x0, likelihood.gradient).so
 x_MLU, info3 = cuqi.solver.maximize(likelihoodU.logd, x0, likelihoodU.gradient).solve()
 
 # %% pCN (likelihood+prior)
-cuqi.sampler.pCN(posterior).sample_adapt(50); 
-cuqi.sampler.pCN((likelihood,prior)).sample_adapt(50); 
+cuqi.sampler.pCN(posterior).sample_adapt(50) 
+cuqi.sampler.pCN((likelihood,prior)).sample_adapt(50) 
 
 # %% Likelihood with "hyperparameters"
 likelihood = cuqi.distribution.Gaussian(mean=model, cov=lambda sigma: sigma**2).to_likelihood(data)

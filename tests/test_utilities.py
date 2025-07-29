@@ -5,7 +5,6 @@ from cuqi.utilities import sparse_cholesky, plot_1D_density, plot_2D_density, co
 from cuqi.model import LinearModel
 from cuqi.distribution import Gaussian, Uniform, JointDistribution
 import numpy as np
-import matplotlib.pyplot as plt
 
 
 @pytest.mark.parametrize("P", [

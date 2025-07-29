@@ -1,11 +1,9 @@
 # %%
 import sys
 
-from numpy import random
 sys.path.append("..")
 import cuqi
 import matplotlib.pyplot as plt
-import numpy as np
 
 # %% demo cuqi.geometry.Discrete 
 geom = cuqi.geometry.Discrete(['a','b','c','e'])

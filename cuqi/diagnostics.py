@@ -5,7 +5,6 @@
 # Version 2021-04
 # ===================================================================
 import numpy as np
-import scipy as sp
 import scipy.stats as sps
 import warnings
 

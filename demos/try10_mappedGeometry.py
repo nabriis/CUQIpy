@@ -3,7 +3,6 @@ import sys
 sys.path.append("..")
 from cuqi.geometry import StepExpansion, MappedGeometry
 import numpy as np
-import matplotlib.pyplot as plt
 
 
 # %% Values to plot

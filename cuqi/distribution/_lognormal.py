@@ -61,7 +61,7 @@ class Lognormal(Distribution):
 
     def _gradient(self, val, *args, **kwargs):
         #Avoid complicated geometries that change the gradient.
-        if not type(self.geometry) in _get_identity_geometries():
+        if type(self.geometry) not in _get_identity_geometries():
             raise NotImplementedError("Gradient not implemented for distribution {} "
                                       "with geometry {}".format(self,self.geometry))
 

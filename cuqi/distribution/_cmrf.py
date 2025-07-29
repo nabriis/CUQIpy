@@ -1,6 +1,6 @@
 import numpy as np
 import warnings
-from cuqi.geometry import _DefaultGeometry1D, Image2D, _get_identity_geometries
+from cuqi.geometry import _get_identity_geometries
 from cuqi.distribution import Distribution
 from cuqi.operator import FirstOrderFiniteDifference
 from cuqi.utilities import force_ndarray
@@ -89,7 +89,7 @@ class CMRF(Distribution):
     
     def _gradient(self, val, **kwargs):
         #Avoid complicated geometries that change the gradient.
-        if not type(self.geometry) in _get_identity_geometries():
+        if type(self.geometry) not in _get_identity_geometries():
             raise NotImplementedError("Gradient not implemented for distribution {} with geometry {}".format(self,self.geometry))
 
         if not callable(self.location): # for prior

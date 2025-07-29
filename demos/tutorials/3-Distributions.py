@@ -8,7 +8,6 @@ The most important concept of distributions in CUQIpy are the fact that they can
 
 """
 # %%
-import cuqi
 
 # %%
 #

@@ -3,9 +3,7 @@ import sys
 
 sys.path.append("..") 
 import numpy as np
-from scipy.sparse import diags
 import matplotlib.pyplot as plt
-import inspect
 
 # Set rng seed 
 np.random.seed(0)
@@ -14,10 +12,8 @@ np.random.seed(0)
 import cuqi
 from cuqi.testproblem import Deconvolution1D
 from cuqi.model import LinearModel
-from cuqi.distribution import Gaussian, LMRF, CMRF
-from cuqi.sampler import CWMH
+from cuqi.distribution import Gaussian
 from cuqi.problem import BayesianProblem
-from cuqi.samples import Samples
 from cuqi.array import CUQIarray
 
 

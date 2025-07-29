@@ -4,4 +4,4 @@ _disable_warning_msg = lambda module_name: "To disable "+\
 "warnings for a given module or library, "+\
 "you can use the method `warnings.filterwarnings`,"+\
 " e.g.: warnings.filterwarnings(action='ignore', "+\
-f"module=r'"+module_name+"')."
+"module=r'"+module_name+"')."

@@ -9,4 +9,3 @@ This shows how to define a custom model and how to use it.
 """
 
 # %%
-import cuqi

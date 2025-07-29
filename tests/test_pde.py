@@ -1,7 +1,5 @@
 
 import numpy as np
-import matplotlib.pyplot as plt
-import sys
 import cuqi
 import pytest
 import scipy

@@ -473,7 +473,7 @@ class Continuous2D(Continuous):
         subplot_ids = self._create_subplot_list(values.shape[-1])
         ims = []
         for rows,cols,subplot_id in subplot_ids:
-            plt.subplot(rows,cols,subplot_id); 
+            plt.subplot(rows,cols,subplot_id) 
             ims.append(plot_method(self.grid[0], self.grid[1], values[..., subplot_id-1].reshape(self.fun_shape[::-1]),
                                    **kwargs))
         self._plot_config()

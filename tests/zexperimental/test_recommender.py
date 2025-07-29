@@ -1,8 +1,5 @@
 import cuqi
-import pytest
 import numpy as np
-import inspect
-from numbers import Number
 
 
 def test_find_valid_samplers_linearGaussianGaussian():

@@ -1,5 +1,4 @@
 import numpy as np
-import numbers
 from scipy.special import erf
 from cuqi.geometry import _get_identity_geometries
 from cuqi.utilities import force_ndarray
@@ -58,7 +57,7 @@ class Normal(Distribution):
         return np.prod(0.5*(1 + erf((x-self.mean)/(self.std*np.sqrt(2)))))
 
     def _gradient(self, val, *args, **kwargs):
-        if not type(self.geometry) in _get_identity_geometries():
+        if type(self.geometry) not in _get_identity_geometries():
             raise NotImplementedError("Gradient not implemented for distribution {} with geometry {}".format(self,self.geometry))
         if not callable(self.mean):
             return -(val-self.mean)/(self.std**2)

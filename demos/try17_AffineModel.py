@@ -1,11 +1,10 @@
 # %%
 import numpy as np
 import matplotlib.pyplot as plt
-import sys
 
 from cuqi.model import AffineModel, LinearModel
-from cuqi.experimental.mcmc import MH, LinearRTO
-from cuqi.distribution import Gaussian, LMRF, GMRF, JointDistribution
+from cuqi.experimental.mcmc import MH
+from cuqi.distribution import Gaussian, JointDistribution
 from cuqi.geometry import Discrete, Continuous1D
 from cuqi.array import CUQIarray
 

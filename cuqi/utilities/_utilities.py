@@ -7,7 +7,6 @@ from scipy.sparse import issparse, diags
 from scipy.sparse import linalg as spslinalg
 from dataclasses import dataclass
 from abc import ABCMeta
-import copy
 import matplotlib.pyplot as plt
 
 

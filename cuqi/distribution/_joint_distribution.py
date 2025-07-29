@@ -244,7 +244,7 @@ class JointDistribution:
         return _StackedJointDistribution(*self._densities)
 
     def __repr__(self):
-        msg = f"JointDistribution(\n"
+        msg = "JointDistribution(\n"
         msg += "    Equation: \n\t"
 
         # Construct equation expression

@@ -1,6 +1,5 @@
 # %%
 import sys
-import time
 sys.path.append("..")
 
 import numpy as np
@@ -20,13 +19,13 @@ plt.ylim([-0.5,3.5])
 plt.legend(['True','Blurred','Blurred and noisy'])
 
 #%% Unpack problem
-b = tp.data;        # Measured data
+b = tp.data        # Measured data
 A = tp.model        # Class with model
 L = tp.likelihood   # Class with likelihood
 
 #%% A few additional parameters from test problem needed
-h = tp.meshsize;        # Size of mesh elements
-n = tp.model.domain_dim;    # Number of unknowns
+h = tp.meshsize        # Size of mesh elements
+n = tp.model.domain_dim    # Number of unknowns
 
 #%% Two choices of prior
 

@@ -399,7 +399,7 @@ class Sampler(ABC):
             
         if self._is_initialized:
             state = self.get_state()
-            msg += f"\n Current state: \n"
+            msg += "\n Current state: \n"
             # Sort keys alphabetically
             keys = sorted(state['state'].keys())
             # Put _ in the end

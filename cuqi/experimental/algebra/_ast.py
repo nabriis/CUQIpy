@@ -210,7 +210,7 @@ class VariableNode(Node):
 
     def __call__(self, **kwargs):
         """Retrieves the value of the variable from the passed kwargs. If no value is found, it raises a KeyError."""
-        if not self.name in kwargs:
+        if self.name not in kwargs:
             raise KeyError(
                 f"Variable '{self.name}' not found in the given input parameters. Unable to evaluate the expression."
             )

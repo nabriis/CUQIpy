@@ -7,7 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # myfuns
-from cuqi.sampler import pCN, MH, NUTS
+from cuqi.sampler import MH, NUTS
 from cuqi.distribution import DistributionGallery
 
 #%%

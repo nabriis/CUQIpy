@@ -2,8 +2,6 @@ import numpy as np
 import cuqi
 import pytest
 import matplotlib
-import matplotlib.pyplot as plt
-from cuqi import geometry
 from cuqi.samples import Samples
 
 @pytest.mark.parametrize("to_funvals, plot_par",

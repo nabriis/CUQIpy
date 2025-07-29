@@ -3,11 +3,9 @@
 import sys
 sys.path.append("..")
 import cuqi
-import numpy as np
 import matplotlib.pyplot as plt
 
-from cuqi.distribution import Gaussian, CMRF, LMRF
-from cuqi.distribution import GMRF, LMRF, Laplace, Beta, InverseGamma, Lognormal
+from cuqi.distribution import CMRF
 from cuqi.sampler import NUTS, CWMH
 
 # %% Deconvolution 1D problem
