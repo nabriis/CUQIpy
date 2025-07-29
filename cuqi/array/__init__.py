@@ -27,3 +27,5 @@ def set_backend(name):
 
 # Expose xp as module attribute
 sys.modules[__name__ + '.xp'] = xp
+
+from ._array import CUQIarray
