@@ -1,4 +1,4 @@
-import numpy as np
+import cuqi.array as xp
 from cuqi.utilities import force_ndarray
 from cuqi.distribution import Distribution
 from cuqi.distribution import Normal
@@ -36,7 +36,7 @@ class TruncatedNormal(Distribution):
         p = cuqi.distribution.TruncatedNormal(mean=0, std=1, low=-2, high=2)
         samples = p.sample(5000)
     """
-    def __init__(self, mean=None, std=None, low=-np.inf, high=np.inf, is_symmetric=False, **kwargs):
+    def __init__(self, mean=None, std=None, low=-xp.inf, high=xp.inf, is_symmetric=False, **kwargs):
         # Init from abstract distribution class
         super().__init__(is_symmetric=is_symmetric, **kwargs)  
 
@@ -94,9 +94,9 @@ class TruncatedNormal(Distribution):
         Computes the unnormalized logpdf at the given values of x.
         """
         # the unnormalized logpdf
-        # check if x falls in the range between np.array a and b
-        if np.any(x < self.low) or np.any(x > self.high):
-            return -np.inf
+        # check if x falls in the range between xp.array a and b
+        if xp.any(x < self.low) or xp.any(x > self.high):
+            return -xp.inf
         else:
              return self._normal.logpdf(x)
 
@@ -104,9 +104,9 @@ class TruncatedNormal(Distribution):
         """
         Computes the gradient of the unnormalized logpdf at the given values of x.
         """
-        # check if x falls in the range between np.array a and b
-        if np.any(x < self.low) or np.any(x > self.high):
-            return np.nan*np.ones_like(x)
+        # check if x falls in the range between xp.array a and b
+        if xp.any(x < self.low) or xp.any(x > self.high):
+            return xp.nan*xp.ones_like(x)
         else:
             return self._normal.gradient(x, *args, **kwargs)
 
@@ -120,9 +120,9 @@ class TruncatedNormal(Distribution):
             if len(samples) == N:
                 break
             sample = self._normal.sample(1,rng)
-            if np.all(sample >= self.low) and np.all(sample <= self.high):
+            if xp.all(sample >= self.low) and xp.all(sample <= self.high):
                 samples.append(sample)
         # raise a error if the number of iterations exceeds max_iter
         if i == max_iter-1:
             raise RuntimeError("Failed to generate {} samples within {} iterations".format(N, max_iter))
-        return np.array(samples).T.reshape(-1,N)
+        return xp.array(samples).T.reshape(-1,N)
