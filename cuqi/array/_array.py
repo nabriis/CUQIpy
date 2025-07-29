@@ -144,8 +144,8 @@ class CUQIarray:
         else:
             return len(self._array.shape)
     
-    def reshape(self, *args):
-        """Reshape the underlying array."""
+    def reshape(self, *args, order=None):
+        """Reshape the underlying array. Ignores 'order' kwarg for numpy compatibility."""
         import cuqi.array as xp
         return xp.reshape(self._array, *args)
     
