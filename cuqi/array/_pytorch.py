@@ -257,8 +257,8 @@ def get_backend_functions(backend_module):
     functions['linalg'] = backend_module.linalg
     functions['fft'] = backend_module.fft
     
-         # Random module - simplified with lambda functions
-     functions['random'] = type('RandomModule', (), {
+    # Random module - simplified with lambda functions
+    functions['random'] = type('RandomModule', (), {
          'randn': staticmethod(lambda *args, **kwargs: backend_module.randn(*args, **kwargs)),
          'rand': staticmethod(lambda *args, **kwargs: backend_module.rand(*args, **kwargs)),
                  'randint': staticmethod(lambda low, high, size=None, dtype=None: (
