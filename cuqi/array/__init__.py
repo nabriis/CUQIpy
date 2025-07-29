@@ -1,6 +1,8 @@
 import os
 import importlib
 import sys
+import numpy as _np
+ndarray = _np.ndarray
 
 # Discover available backends
 BACKENDS = {}
