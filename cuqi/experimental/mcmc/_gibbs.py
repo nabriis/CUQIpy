@@ -10,8 +10,22 @@ try:
     from tqdm import tqdm
 except ImportError:
     def tqdm(iterable, **kwargs):
-        warnings.warn("Module mcmc: tqdm not found. Install tqdm to get sampling progress.")
-        return iterable
+        try:
+            from tqdm import tqdm as real_tqdm
+            return real_tqdm(iterable, **kwargs)
+        except ImportError:
+            class DummyTqdm:
+                def __init__(self, iterable, **kwargs):
+                    self._iter = iterable
+                def __iter__(self):
+                    return iter(self._iter)
+                def __next__(self):
+                    return next(self._iter)
+                def set_postfix_str(self, s):
+                    pass
+            import warnings
+            warnings.warn("Module mcmc: tqdm not found. Install tqdm to get sampling progress.")
+            return DummyTqdm(iterable, **kwargs)
 
 # Not subclassed from Sampler as Gibbs handles multiple samplers and samples multiple parameters
 # Similar approach as for JointDistribution
