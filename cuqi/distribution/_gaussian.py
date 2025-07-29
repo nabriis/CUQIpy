@@ -238,6 +238,10 @@ class Gaussian(Distribution):
 
     @property
     def sqrtprecTimesMean(self):
+        if not hasattr(self, 'sqrtprec') or self.sqrtprec is None:
+            raise AttributeError("sqrtprec is not set for this Gaussian; cannot compute sqrtprecTimesMean.")
+        if not hasattr(self, 'mean') or self.mean is None:
+            raise AttributeError("mean is not set for this Gaussian; cannot compute sqrtprecTimesMean.")
         mean = xp.repeat(self.mean, self.dim) if len(self.mean) == 1 else self.mean
         return (self.sqrtprec@mean).flatten()
 

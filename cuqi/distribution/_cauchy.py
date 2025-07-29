@@ -75,7 +75,7 @@ class Cauchy(Distribution):
     def logpdf(self, x):
 
         if self._is_out_of_bounds(x):
-            return xp.inf
+            return -xp.inf
         
         return xp.sum(-xp.log(xp.pi*self.scale*(1+((x-self.location)/self.scale)**2)))
     
