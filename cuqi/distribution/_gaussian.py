@@ -92,10 +92,14 @@ class Gaussian(Distribution):
         x = cuqi.distribution.Gaussian(mean=0, sqrtprec=sqrtprec)
     
     """
-    def __init__(self, mean=None, cov=None, prec=None, sqrtcov=None, sqrtprec=None, is_symmetric=True, **kwargs):
-        super().__init__(is_symmetric=is_symmetric, **kwargs)
+    def __init__(self, mean=None, cov=None, prec=None, sqrtcov=None, sqrtprec=None, is_symmetric=True, geometry=None, **kwargs):
+        super().__init__(is_symmetric=is_symmetric, geometry=geometry, **kwargs)
 
         self.mean = mean
+
+        # If mean or cov is a model/callable and geometry is not provided, raise error
+        if (callable(mean) or hasattr(mean, 'forward') or callable(cov) or hasattr(cov, 'forward')) and geometry is None:
+            raise ValueError("Gaussian: Unable to automatically determine geometry of distribution when mean or cov is a model/callable. Please specify a geometry with the geometry keyword.")
 
         n_given = (cov is not None) + (prec is not None) + (sqrtprec is not None) + (sqrtcov is not None)
         if n_given == 0:
@@ -323,6 +327,9 @@ class Gaussian(Distribution):
 
     def _logupdf(self, x):
         """ Un-normalized log density """
+        # If mean is a model/callable, raise clear error
+        if callable(self.mean) or hasattr(self.mean, 'forward'):
+            raise TypeError("Cannot evaluate logpdf: mean is a model/callable. Provide a numeric mean or use the model appropriately.")
         dev = x - self.mean
         mahadist = xp.sum(xp.square(self.sqrtprec @ dev.T), axis=0)
         return -0.5*mahadist.flatten()
