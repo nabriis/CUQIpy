@@ -215,7 +215,7 @@ class Sampler(ABC):
             batch_handler = _BatchHandler(batch_size, sample_path)
 
         # Draw samples
-        pbar = tqdm(range(Ns), "Sample: ")
+        pbar = tqdm(range(Ns), desc="Sample: ")
         for idx in pbar:
             
             # Perform one step of the sampler
@@ -256,7 +256,7 @@ class Sampler(ABC):
         tune_interval = max(int(tune_freq * Nb), 1)
 
         # Draw warmup samples with tuning
-        pbar = tqdm(range(Nb), "Warmup: ")
+        pbar = tqdm(range(Nb), desc="Warmup: ")
         for idx in pbar:
 
             # Perform one step of the sampler

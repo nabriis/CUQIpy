@@ -191,7 +191,7 @@ class HybridGibbs:
             The number of samples to draw.
 
         """
-        for idx in tqdm(range(Ns), "Sample: "):
+        for idx in tqdm(range(Ns), desc="Sample: "):
 
             self.step()
 
@@ -217,7 +217,7 @@ class HybridGibbs:
 
         tune_interval = max(int(tune_freq * Nb), 1)
 
-        for idx in tqdm(range(Nb), "Warmup: "):
+        for idx in tqdm(range(Nb), desc="Warmup: "):
 
             self.step()
 
